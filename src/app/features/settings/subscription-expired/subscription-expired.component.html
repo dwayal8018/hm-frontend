@@ -1,0 +1,19 @@
+<div class="expired-page">
+  <mat-card class="expired-card">
+    <mat-icon class="expired-icon">block</mat-icon>
+    <h2>Subscription Expired</h2>
+    <p>Your subscription has expired. Please renew your plan to continue using Hotel Manager.</p>
+    <div class="sub-info">
+      <span>Plan: {{ planType }}</span>
+      <span>Expired on: <strong>{{ expiryDate | date:'dd MMM yyyy' }}</strong></span>
+    </div>
+    <div class="actions">
+      <button mat-raised-button color="primary" (click)="renewNow()">
+        <mat-icon>payment</mat-icon> Renew Now
+      </button>
+      <button mat-stroked-button (click)="logout()">
+        <mat-icon>logout</mat-icon> Logout
+      </button>
+    </div>
+  </mat-card>
+</div>

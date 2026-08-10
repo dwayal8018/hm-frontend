@@ -1,0 +1,168 @@
+<div class="bill-detail-page">
+
+  @if (loading()) { <mat-progress-bar mode="indeterminate"></mat-progress-bar> }
+
+  @if (order()) {
+    <!-- ── Action bar (hidden on print) ─────────────────────────────────── -->
+    <div class="bill-actions no-print">
+      <button mat-icon-button routerLink="/billing" aria-label="Back to billing">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <span class="spacer"></span>
+      <button mat-stroked-button (click)="printBill()">
+        <mat-icon>print</mat-icon> Print
+      </button>
+      @if (order()!.status === 'BILLED') {
+        <button mat-raised-button color="accent" (click)="markPaid('CASH')">
+          <mat-icon>payments</mat-icon> Paid — Cash
+        </button>
+        <button mat-raised-button color="primary" (click)="markPaid('UPI')">
+          <mat-icon>qr_code_2</mat-icon> Paid — UPI
+        </button>
+        <button mat-raised-button (click)="markPaid('CARD')">
+          <mat-icon>credit_card</mat-icon> Paid — Card
+        </button>
+      }
+    </div>
+
+    <!-- ── Printable invoice ─────────────────────────────────────────────── -->
+    <mat-card class="bill-card print-area">
+
+      <!-- Hotel header -->
+      <div class="bill-header">
+        @if (restaurantLogo) {
+          <img [src]="restaurantLogo" class="hotel-logo" alt="Hotel logo">
+        } @else {
+          <div class="hotel-logo-placeholder">
+            <mat-icon>hotel</mat-icon>
+          </div>
+        }
+        <h2 class="rest-name">{{ restaurantName }}</h2>
+        @if (restaurantAddr)  { <p class="rest-info">{{ restaurantAddr }}</p> }
+        @if (restaurantPhone) { <p class="rest-info">📞 {{ restaurantPhone }}</p> }
+        @if (restaurantGst)   { <p class="rest-info gst">GSTIN: {{ restaurantGst }}</p> }
+        @if (upiId)           { <p class="rest-info">UPI: {{ upiId }}</p> }
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Bill meta -->
+      <div class="bill-meta">
+         <div class="meta-row">
+          <span class="meta-label">Date</span>
+          <span class="meta-value">{{ order()!.createdAt | date:'dd MMM yyyy, hh:mm a' }}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">Invoice #</span>
+          <span class="meta-value">#{{ order()!.id }}</span>
+        </div>
+       
+        @if (order()!.customerName) {
+          <div class="meta-row">
+            <span class="meta-label">Customer</span>
+            <span class="meta-value">{{ order()!.customerName }}</span>
+          </div>
+        }
+        <!-- @if (order()!.guestCount) {
+          <div class="meta-row">
+            <span class="meta-label">Covers</span>
+            <span class="meta-value">{{ order()!.guestCount }} guests</span>
+          </div>
+        } -->
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Items table -->
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th class="col-item">Item</th>
+            <th class="col-qty">Qty</th>
+            <th class="col-rate">Rate</th>
+            <th class="col-amt">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of order()!.items; track item.id) {
+            <tr>
+              <td class="col-item">
+                <span class="food-indicator"
+                      [class.veg]="item.foodType === 'VEG'"
+                      [class.nonveg]="item.foodType === 'NON_VEG'"
+                      [class.egg]="item.foodType === 'EGG'">
+                </span>
+                {{ item.menuItemName }}
+                @if (item.notes) { <span class="item-note">· {{ item.notes }}</span> }
+              </td>
+              <td class="col-qty center">{{ item.quantity }}</td>
+              <td class="col-rate right">₹{{ item.unitPrice | number:'1.2-2' }}</td>
+              <td class="col-amt right">₹{{ item.totalPrice | number:'1.2-2' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <mat-divider></mat-divider>
+
+      <!-- Totals -->
+      <div class="totals">
+        <div class="total-row">
+          <span>Subtotal</span>
+          <span>₹{{ order()!.subtotal | number:'1.2-2' }}</span>
+        </div>
+        @if (order()!.discountAmount > 0) {
+          <div class="total-row discount">
+            <span>Discount
+              @if (order()!.discountPercent > 0) {
+                ({{ order()!.discountPercent }}%)
+              }
+            </span>
+            <span>− ₹{{ order()!.discountAmount | number:'1.2-2' }}</span>
+          </div>
+        }
+        @if (order()!.taxAmount > 0) {
+          <div class="total-row tax">
+            <span>GST ({{ order()!.taxPercent }}%)</span>
+            <span>₹{{ order()!.taxAmount | number:'1.2-2' }}</span>
+          </div>
+        }
+        <mat-divider></mat-divider>
+        <div class="total-row grand-total">
+          <span>TOTAL</span>
+          <span>₹{{ order()!.totalAmount | number:'1.2-2' }}</span>
+        </div>
+        @if (order()!.paymentMethod) {
+          <div class="total-row payment-method">
+            <span>Payment</span>
+            <span>{{ order()!.paymentMethod }}</span>
+          </div>
+        }
+        @if (order()!.status === 'PAID') {
+          <div class="paid-stamp">✓ PAID</div>
+        }
+      </div>
+
+      <!-- UPI QR Code -->
+      @if (upiId && order()!.status === 'BILLED' && qrDataUrl()) {
+        <mat-divider></mat-divider>
+        <div class="qr-section">
+          <p class="qr-title">Scan & Pay via UPI</p>
+          <img [src]="qrDataUrl()"
+               class="qr-image"
+               alt="UPI QR Code"
+               width="180" height="180">
+          <p class="qr-amount">₹{{ order()!.totalAmount | number:'1.2-2' }}</p>
+          <p class="qr-upi">{{ upiId }}</p>
+        </div>
+      }
+
+      <!-- Footer -->
+      <div class="bill-footer">
+        <p>Thank you for dining at <strong>{{ restaurantName }}</strong>!</p>
+        <p>We hope to see you again 🙏</p>
+      </div>
+
+    </mat-card>
+  }
+</div>

@@ -1,0 +1,43 @@
+<div class="tables-page">
+  <div class="page-header">
+    <h2>Tables</h2>
+    <div class="table-legend">
+      <span class="legend-dot available"></span> Available ({{ availableTables }})
+      <span class="legend-dot occupied"></span> Occupied ({{ occupiedTables }})
+      @if (billedTables > 0) {
+        <span class="legend-dot billed"></span> Billed ({{ billedTables }})
+      }
+    </div>
+    <button mat-icon-button (click)="loadTables()" matTooltip="Refresh" aria-label="Refresh tables">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+
+  @if (loading) { <mat-progress-bar mode="indeterminate"></mat-progress-bar> }
+
+  <div class="tables-grid">
+    @for (table of tables; track table.id) {
+      <mat-card class="table-card" [class]="'table-' + table.status.toLowerCase()"
+                [routerLink]="['/tables', table.id, 'order']">
+        <mat-card-content>
+          <div class="table-number">{{ table.tableNumber }}</div>
+          <div class="table-capacity">
+            <mat-icon>people</mat-icon> {{ table.capacity }}
+          </div>
+          <div class="table-status-badge" [class]="'badge-' + table.status.toLowerCase()">
+            {{ table.status }}
+          </div>
+          @if (table.floor) { <div class="table-floor">{{ table.floor }}</div> }
+        </mat-card-content>
+      </mat-card>
+    } @empty {
+      @if (!loading) {
+        <div class="no-tables">
+          <mat-icon>table_restaurant</mat-icon>
+          <p>No tables configured yet.</p>
+          <p style="font-size:12px;color:#bdbdbd">Ask your manager to add tables in Settings.</p>
+        </div>
+      }
+    }
+  </div>
+</div>

@@ -1,0 +1,45 @@
+.shell-container { height: 100vh; }
+
+.shell-sidenav {
+  width: 230px;
+  background-color: #fff;
+  border-right: 1px solid #e0e0e0;
+
+  .sidenav-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 16px; background-color: #bf360c; color: #fff;
+    .logo-icon { font-size: 28px; }
+    .restaurant-name { font-size: 15px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  }
+
+  .active-nav-item {
+    background-color: #fbe9e7; color: #bf360c; border-left: 3px solid #bf360c;
+    mat-icon { color: #bf360c; }
+  }
+
+  .sidenav-sub-warning {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; padding: 10px 16px;
+    mat-icon { font-size: 18px; }
+  }
+}
+
+.shell-toolbar {
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  .toolbar-spacer { flex: 1 1 auto; }
+  .user-info { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+  .role-chip {
+    font-size: 11px; height: 22px; min-height: 22px;
+    &.chip-owner   { background-color: #e8f5e9; color: #2e7d32; }
+    &.chip-manager { background-color: #e3f2fd; color: #1565c0; }
+    &.chip-waiter  { background-color: #fff3e0; color: #e65100; }
+  }
+}
+
+.shell-content { display: flex; flex-direction: column; height: 100vh; }
+
+.page-content {
+  flex: 1; padding: 24px; overflow-y: auto; background-color: #f5f5f5;
+}

@@ -1,0 +1,127 @@
+<div class="settings-subpage">
+  <div class="subpage-header">
+    <button mat-icon-button routerLink="/settings" aria-label="Back"><mat-icon>arrow_back</mat-icon></button>
+    <h2>User Management</h2>
+    <span class="spacer"></span>
+    <button mat-raised-button color="primary" (click)="showAddForm = !showAddForm"
+            [disabled]="addableRoles.length === 0">
+      <mat-icon>{{ showAddForm ? 'close' : 'person_add' }}</mat-icon>
+      {{ showAddForm ? 'Cancel' : 'Add User' }}
+    </button>
+  </div>
+
+  @if (loading) { <mat-progress-bar mode="indeterminate"></mat-progress-bar> }
+
+  @if (showAddForm) {
+    <mat-card class="add-card">
+      <mat-card-header><mat-card-title>New Staff Account</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="addUser()" class="add-form">
+
+          <div class="row-3col">
+            <mat-form-field appearance="outline">
+              <mat-label>Username</mat-label>
+              <input matInput formControlName="username" placeholder="e.g. waiter1" autocomplete="off">
+              <mat-hint>Lowercase, numbers, _ only</mat-hint>
+              <mat-error>
+                @if (form.get('username')?.hasError('required')) { Required }
+                @if (form.get('username')?.hasError('pattern')) { Lowercase, numbers, _ only }
+                @if (form.get('username')?.hasError('minlength')) { Min 3 characters }
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Full Name</mat-label>
+              <input matInput formControlName="fullName">
+              <mat-error>Required</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Role</mat-label>
+              <mat-select formControlName="role">
+                @for (r of addableRoles; track r) {
+                  <mat-option [value]="r">{{ r }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!-- Password in its own row to avoid hint overlap -->
+          <div class="password-row">
+            <mat-form-field appearance="outline" style="width:100%">
+              <mat-label>Password</mat-label>
+              <input matInput formControlName="password"
+                     [type]="hidePassword ? 'password' : 'text'"
+                     autocomplete="new-password">
+              <button mat-icon-button matSuffix type="button"
+                      (click)="hidePassword = !hidePassword"
+                      [attr.aria-label]="hidePassword ? 'Show' : 'Hide'">
+                <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              <mat-hint>Min 8 characters</mat-hint>
+              <mat-error>Min 8 characters</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-actions">
+            <button mat-raised-button color="primary" type="submit"
+                    [disabled]="form.invalid || saving">
+              @if (saving) {
+                <mat-spinner diameter="18" style="display:inline-block;margin-right:6px"></mat-spinner>
+              }
+              Create User
+            </button>
+          </div>
+
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <mat-card class="users-card">
+    <mat-card-content>
+
+      @if (users.length === 0 && !loading) {
+        <div class="empty-state">
+          <mat-icon>people</mat-icon>
+          <p>No staff accounts yet. Add your first waiter or manager.</p>
+        </div>
+      }
+
+      @for (user of users; track user.id; let last = $last) {
+        <div class="user-row" [class.inactive]="!user.active">
+          <div class="user-avatar">{{ user.fullName.charAt(0).toUpperCase() }}</div>
+          <div class="user-info">
+            <span class="user-name">{{ user.fullName }}</span>
+            <span class="user-username">{{ '@' + user.username }}</span>
+          </div>
+          <mat-chip [color]="roleColor(user.role)" highlighted>{{ user.role }}</mat-chip>
+          @if (!user.active) {
+            <span class="inactive-badge">Inactive</span>
+          }
+          <div class="user-actions">
+            @if (user.role !== 'OWNER') {
+              <button mat-icon-button
+                      [matTooltip]="user.active ? 'Deactivate' : 'Activate'"
+                      (click)="toggleUser(user)"
+                      [attr.aria-label]="user.active ? 'Deactivate' : 'Activate'">
+                <mat-icon>{{ user.active ? 'person_off' : 'person' }}</mat-icon>
+              </button>
+              <button mat-icon-button color="warn"
+                      matTooltip="Delete user"
+                      (click)="deleteUser(user)"
+                      aria-label="Delete user">
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+          </div>
+        </div>
+        @if (!last) {
+          <mat-divider></mat-divider>
+        }
+      }
+
+    </mat-card-content>
+  </mat-card>
+
+</div>

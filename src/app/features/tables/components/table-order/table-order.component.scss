@@ -1,0 +1,106 @@
+.order-page { height: calc(100vh - 64px); display: flex; flex-direction: column; }
+
+.order-layout {
+  flex: 1; display: flex; gap: 0; overflow: hidden;
+}
+
+/* Left: menu */
+.menu-panel {
+  flex: 1; overflow-y: auto; padding: 0 16px 16px;
+  border-right: 1px solid #e0e0e0;
+}
+.panel-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 0; position: sticky; top: 0; background: #f5f5f5; z-index: 10;
+  h2 { font-size: 18px; font-weight: 500; }
+}
+
+/* ── Veg/NonVeg filter bar ──────────────────────────────────────── */
+.food-filter-bar {
+  display: flex; gap: 8px; padding: 8px 0 12px;
+  position: sticky; top: 52px; background: #f5f5f5; z-index: 9;
+}
+.filter-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 14px; border-radius: 20px; border: 2px solid #e0e0e0;
+  background: #fff; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s; color: #424242;
+
+  .dot {
+    width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0;
+    &.veg    { background: #2e7d32; border: 1.5px solid #2e7d32; }
+    &.nonveg { background: #c62828; border: 1.5px solid #c62828; }
+  }
+
+  &.active          { border-color: #bf360c; background: #fff3f0; color: #bf360c; font-weight: 600; }
+  &.veg-btn.active  { border-color: #2e7d32; background: #e8f5e9; color: #2e7d32; }
+  &.nonveg-btn.active { border-color: #c62828; background: #ffebee; color: #c62828; }
+  &:hover:not(.active) { border-color: #bdbdbd; background: #fafafa; }
+}
+
+/* ── Food dot on items ─────────────────────────────────────────── */
+.food-dot {
+  width: 12px; height: 12px; border-radius: 2px;
+  border: 1.5px solid; flex-shrink: 0;
+  &.veg    { border-color: #2e7d32; background: #2e7d32; }
+  &.nonveg { border-color: #c62828; background: #c62828; }
+  &.egg    { border-color: #f57f17; background: #f57f17; }
+  &.sm     { width: 10px; height: 10px; }
+}
+
+.menu-items { display: flex; flex-direction: column; gap: 8px; padding: 8px 0; }
+.menu-item-card {
+  cursor: pointer; transition: box-shadow 0.15s;
+  &:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+  mat-card-content { padding: 12px !important; }
+}
+.item-row { display: flex; align-items: center; gap: 10px; }
+.item-name { flex: 1; font-size: 14px; font-weight: 500; }
+.item-price { font-weight: 700; color: #bf360c; white-space: nowrap; }
+.add-btn { width: 32px; height: 32px; min-width: 32px; }
+.item-desc { font-size: 12px; color: #9e9e9e; margin: 4px 0 0 22px; }
+.empty-hint { color: #9e9e9e; text-align: center; padding: 24px 0; font-size: 14px; }
+
+/* Right: order */
+.order-panel {
+  width: 320px; min-width: 280px; display: flex; flex-direction: column;
+  background: #fff; padding: 16px;
+}
+.order-panel-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+  h3 { font-size: 16px; font-weight: 600; flex: 1; }
+  .item-count-badge {
+    background: #bf360c; color: #fff; border-radius: 12px;
+    padding: 2px 10px; font-size: 12px;
+  }
+}
+.empty-order {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: #9e9e9e; text-align: center;
+  mat-icon { font-size: 56px; width: 56px; height: 56px; margin-bottom: 12px; }
+  p { font-size: 14px; line-height: 1.6; }
+}
+.order-items-list { flex: 1; overflow-y: auto; }
+.order-item {
+  display: flex; align-items: center; gap: 8px; padding: 10px 0; font-size: 14px;
+  .item-name { flex: 1; }
+  .qty-controls {
+    display: flex; align-items: center;
+    button { width: 28px; height: 28px; line-height: 28px;
+      mat-icon { font-size: 16px; width: 16px; height: 16px; } }
+    .qty { width: 24px; text-align: center; font-weight: 600; }
+  }
+  .item-total { font-weight: 600; width: 56px; text-align: right; }
+}
+.order-footer {
+  padding-top: 12px; border-top: 1px solid #e0e0e0; margin-top: 8px;
+  .total-row { display: flex; justify-content: space-between; font-size: 16px; margin-bottom: 12px; }
+  .bill-btn  { width: 100%; height: 44px; font-size: 15px; }
+}
+
+.waiter-total-note {
+  display: flex; align-items: center; gap: 8px;
+  background: #fff8e1; border: 1px solid #ffe082; border-radius: 8px;
+  padding: 10px 14px; font-size: 13px; color: #f57f17;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; flex-shrink: 0; }
+}

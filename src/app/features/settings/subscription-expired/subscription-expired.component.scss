@@ -1,0 +1,32 @@
+.expired-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+}
+.expired-card {
+  max-width: 440px;
+  width: 100%;
+  padding: 40px;
+  text-align: center;
+  border-radius: 12px;
+}
+.expired-icon {
+  font-size: 72px;
+  width: 72px;
+  height: 72px;
+  color: #f44336;
+  margin: 0 auto 16px;   /* center the icon */
+  display: block;
+}
+h2 { font-size: 22px; margin-bottom: 12px; }
+p  { color: #616161; margin-bottom: 8px; }
+.sub-info {
+  display: flex; flex-direction: column; gap: 4px;
+  background: #ffebee; padding: 12px 16px; border-radius: 6px;
+  margin: 16px 0; font-size: 14px;
+}
+.actions {
+  display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap;
+}

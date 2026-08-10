@@ -1,0 +1,103 @@
+<div class="dashboard-page">
+  <div class="page-header">
+    <h2>Dashboard</h2>
+    <button mat-stroked-button (click)="loadSummary()">
+      <mat-icon>refresh</mat-icon> Refresh
+    </button>
+  </div>
+
+  @if (loading) { <mat-progress-bar mode="indeterminate"></mat-progress-bar> }
+
+  @if (error) {
+    <mat-card class="error-card">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <p>Could not load data. Make sure the local backend is running.</p>
+      <button mat-raised-button color="primary" (click)="loadSummary()">Retry</button>
+    </mat-card>
+  }
+
+  @if (summary && !loading) {
+    <!-- KPI row -->
+    <div class="kpi-row">
+      <mat-card class="kpi-card kpi-sales">
+        <mat-icon>currency_rupee</mat-icon>
+        <div class="kpi-value">&#8377;{{ summary.todaySales | number:'1.0-0' }}</div>
+        <div class="kpi-label">Today's Sales</div>
+      </mat-card>
+
+      <mat-card class="kpi-card kpi-orders">
+        <mat-icon>receipt</mat-icon>
+        <div class="kpi-value">{{ summary.todayOrders }}</div>
+        <div class="kpi-label">Orders Today</div>
+      </mat-card>
+
+      <mat-card class="kpi-card kpi-avg">
+        <mat-icon>trending_up</mat-icon>
+        <div class="kpi-value">&#8377;{{ summary.averageOrderValue | number:'1.0-0' }}</div>
+        <div class="kpi-label">Avg Order Value</div>
+      </mat-card>
+
+      <mat-card class="kpi-card kpi-tables">
+        <mat-icon>table_restaurant</mat-icon>
+        <div class="kpi-value">{{ summary.activeTableCount }}/{{ summary.totalTableCount }}</div>
+        <div class="kpi-label">Tables Occupied</div>
+        <mat-progress-bar mode="determinate" [value]="tableOccupancyPercent" class="mt-8"></mat-progress-bar>
+      </mat-card>
+    </div>
+
+    <!-- Content row -->
+    <div class="content-row">
+
+      <mat-card class="section-card">
+        <mat-card-header><mat-card-title>Top Selling Items</mat-card-title></mat-card-header>
+        <mat-card-content>
+          @for (item of summary.topSellingItems; track item.menuItemId; let i = $index) {
+            <div class="top-item">
+              <span class="rank">{{ i + 1 }}</span>
+              <span [class]="item.foodType === 'VEG' ? 'badge-veg' : 'badge-nonveg'"></span>
+              <span class="item-name">{{ item.menuItemName }}</span>
+              <span class="item-qty">x{{ item.quantitySold }}</span>
+              <span class="item-rev">&#8377;{{ item.revenue | number:'1.0-0' }}</span>
+            </div>
+            <mat-divider></mat-divider>
+          } @empty {
+            <p class="empty-hint">No sales data yet today.</p>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="section-card">
+        <mat-card-header><mat-card-title>Sales by Category</mat-card-title></mat-card-header>
+        <mat-card-content>
+          @for (cat of summary.salesByCategory; track cat.categoryName) {
+            <div class="category-row">
+              <span class="cat-name">{{ cat.categoryName }}</span>
+              <mat-progress-bar mode="determinate" [value]="cat.percentage" class="cat-bar"></mat-progress-bar>
+              <span class="cat-percent">{{ cat.percentage | number:'1.0-0' }}%</span>
+            </div>
+          } @empty { <p class="empty-hint">No category data yet.</p> }
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="section-card">
+        <mat-card-header>
+          <mat-card-title>Recent Orders</mat-card-title>
+          <button mat-button routerLink="/billing" color="primary">View All</button>
+        </mat-card-header>
+        <mat-card-content>
+          @for (order of summary.recentOrders; track order.orderId) {
+            <div class="recent-order">
+              <mat-icon>table_restaurant</mat-icon>
+              <span class="order-table">{{ order.tableNumber }}</span>
+              <span class="order-items">{{ order.itemCount }} items</span>
+              <span class="order-amount">&#8377;{{ order.totalAmount | number:'1.0-0' }}</span>
+              <span class="order-status" [class]="'status-' + order.status.toLowerCase()">{{ order.status }}</span>
+            </div>
+            <mat-divider></mat-divider>
+          } @empty { <p class="empty-hint">No recent orders.</p> }
+        </mat-card-content>
+      </mat-card>
+
+    </div>
+  }
+</div>

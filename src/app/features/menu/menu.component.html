@@ -1,0 +1,127 @@
+<div class="menu-page">
+  <div class="page-header">
+    <h2>Menu Management</h2>
+    <div class="header-actions">
+      <button mat-stroked-button (click)="openAddCategory()">
+        <span class="btn-content"><mat-icon>create_new_folder</mat-icon> Add Category</span>
+      </button>
+      <button mat-raised-button color="primary" (click)="openAddItem()"
+              [disabled]="categories.length === 0">
+        <span class="btn-content"><mat-icon>add</mat-icon> Add Item</span>
+      </button>
+    </div>
+  </div>
+
+  @if (loading) { <mat-progress-bar mode="indeterminate"></mat-progress-bar> }
+
+  @if (categories.length === 0 && !loading) {
+    <div class="empty-menu">
+      <mat-icon>restaurant_menu</mat-icon>
+      <h3>No categories yet</h3>
+      <p>Start by adding a category like "Starters" or "Mains", then add items to it.</p>
+      <button mat-raised-button color="primary" (click)="openAddCategory()">
+        <mat-icon>add</mat-icon> Add First Category
+      </button>
+    </div>
+  } @else {
+    <mat-tab-group (selectedTabChange)="onTabChange($event.index)" [selectedIndex]="activeTabIndex">
+      @for (cat of categories; track cat.id) {
+        <mat-tab>
+
+          <!-- Custom tab label with edit/delete -->
+          <ng-template mat-tab-label>
+            <span class="tab-label">
+              {{ cat.name }}
+              <span class="tab-count">{{ cat.itemCount ?? 0 }}</span>
+              <button mat-icon-button class="tab-edit-btn"
+                      (click)="openEditCategory(cat, $event)"
+                      matTooltip="Edit category" aria-label="Edit category">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button class="tab-del-btn"
+                      (click)="deleteCategory(cat, $event)"
+                      matTooltip="Delete category" aria-label="Delete category">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </span>
+          </ng-template>
+
+          <!-- Veg / Non-Veg filter bar: only for food categories, not drinks/desserts/juices -->
+          @if (showFoodFilter) {
+            <div class="food-filter-bar">
+              <button class="filter-btn" [class.active]="foodFilter === 'ALL'" (click)="setFilter('ALL')">All</button>
+              <button class="filter-btn veg-btn" [class.active]="foodFilter === 'VEG'" (click)="setFilter('VEG')">
+                <span class="fdot veg"></span> Veg
+              </button>
+              <button class="filter-btn nonveg-btn" [class.active]="foodFilter === 'NON_VEG'" (click)="setFilter('NON_VEG')">
+                <span class="fdot nonveg"></span> Non-Veg
+              </button>
+            </div>
+          }
+
+          <!-- Empty state: outside the grid, full width, centered -->
+          @if (allItems.length === 0 && !loading) {
+            <div class="empty-category-fullwidth">
+              <mat-icon>restaurant_menu</mat-icon>
+              <p>No items in this category yet.</p>
+              <button mat-raised-button color="primary" (click)="openAddItem()">
+                <mat-icon>add</mat-icon> Add First Item
+              </button>
+            </div>
+          }
+
+          <!-- Items grid: only rendered when there are items -->
+          @if (items.length > 0) {
+            <div class="items-grid">
+              @for (item of items; track item.id) {
+                <mat-card class="item-card" [class.unavailable]="!item.available">
+                  <mat-card-content>
+                    <div class="item-header">
+                      <span class="food-dot"
+                            [class.veg]="item.foodType === 'VEG'"
+                            [class.nonveg]="item.foodType === 'NON_VEG'"
+                            [class.egg]="item.foodType === 'EGG'"
+                            [matTooltip]="item.foodType === 'VEG' ? 'Veg' : item.foodType === 'NON_VEG' ? 'Non-Veg' : 'Egg'">
+                      </span>
+                      <span class="item-name">{{ item.name }}</span>
+                      <mat-slide-toggle [checked]="item.available"
+                        (change)="toggleAvailability(item)"
+                        [attr.aria-label]="item.available ? 'Mark unavailable' : 'Mark available'">
+                      </mat-slide-toggle>
+                    </div>
+
+                    @if (item.description) {
+                      <p class="item-desc">{{ item.description }}</p>
+                    }
+
+                    <div class="item-footer">
+                      <span class="item-price">₹{{ item.price }}</span>
+                      <div class="item-tags">
+                        @for (tag of item.tags; track tag) {
+                          <span class="item-tag">{{ tag }}</span>
+                        }
+                      </div>
+                      <div class="item-actions">
+                        <button mat-icon-button (click)="openEditItem(item)"
+                                matTooltip="Edit item" aria-label="Edit item">
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                        <button mat-icon-button color="warn" (click)="deleteItem(item)"
+                                matTooltip="Delete item" aria-label="Delete item">
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </div>
+                    </div>
+
+                  </mat-card-content>
+                </mat-card>
+              }
+            </div>
+          }
+
+        </mat-tab>
+      }
+    </mat-tab-group>
+  }
+
+</div>

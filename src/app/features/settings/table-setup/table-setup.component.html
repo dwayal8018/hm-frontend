@@ -1,0 +1,118 @@
+<div class="table-setup-page">
+
+  <div class="page-header">
+    <div class="header-left">
+      <button mat-icon-button routerLink="/settings" aria-label="Back to settings">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2>Table Setup</h2>
+    </div>
+    <button mat-stroked-button (click)="bulkAdd()">
+      <mat-icon>playlist_add</mat-icon> Bulk Add
+    </button>
+  </div>
+
+  @if (loading()) { <mat-progress-bar mode="indeterminate"></mat-progress-bar> }
+
+  <div class="setup-layout">
+
+    <!-- ── Add / Edit Form ─────────────────────────────────────── -->
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>{{ editingId() ? 'Edit Table' : 'Add New Table' }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="save()" class="table-form">
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Table Number / Name</mat-label>
+            <input matInput formControlName="tableNumber" placeholder="e.g. T1, Table 5, Balcony 2">
+            <mat-icon matSuffix>table_restaurant</mat-icon>
+            <mat-error>Table number is required</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Seating Capacity</mat-label>
+            <input matInput formControlName="capacity" type="number" min="1" max="50">
+            <mat-icon matSuffix>people</mat-icon>
+            <mat-error>Enter a valid capacity (1–50)</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Floor / Section</mat-label>
+            <mat-select formControlName="floor">
+              @for (f of floors; track f) {
+                <mat-option [value]="f">{{ f }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <div class="form-actions">
+            @if (editingId()) {
+              <button mat-stroked-button type="button" (click)="cancelEdit()">Cancel</button>
+            }
+            <button mat-raised-button color="primary" type="submit"
+                    [disabled]="form.invalid || saving()">
+              <mat-icon>{{ editingId() ? 'save' : 'add' }}</mat-icon>
+              {{ editingId() ? 'Update Table' : 'Add Table' }}
+            </button>
+          </div>
+
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- ── Tables List ─────────────────────────────────────────── -->
+    <mat-card class="list-card">
+      <mat-card-header>
+        <mat-card-title>
+          All Tables
+          <span class="count-badge">{{ tables().length }}</span>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+
+        @if (tables().length === 0 && !loading()) {
+          <div class="empty-state">
+            <mat-icon>table_restaurant</mat-icon>
+            <p>No tables yet. Add your first table using the form.</p>
+          </div>
+        }
+
+        <div class="tables-list">
+          @for (table of tables(); track table.id) {
+            <div class="table-row" [class.editing]="editingId() === table.id">
+              <div class="table-info">
+                <span class="table-num">{{ table.tableNumber }}</span>
+                <span class="table-meta">
+                  <mat-icon>people</mat-icon>{{ table.capacity }}
+                  @if (table.floor) { &nbsp;·&nbsp; {{ table.floor }} }
+                </span>
+                <span class="table-status" [class]="'status-' + table.status.toLowerCase()">
+                  {{ table.status }}
+                </span>
+              </div>
+              <div class="table-actions">
+                <button mat-icon-button (click)="startEdit(table)"
+                        [disabled]="editingId() !== null"
+                        matTooltip="Edit" aria-label="Edit table">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn"
+                        (click)="deleteTable(table)"
+                        [disabled]="table.status === 'OCCUPIED'"
+                        matTooltip="{{ table.status === 'OCCUPIED' ? 'Cannot delete occupied table' : 'Delete' }}"
+                        aria-label="Delete table">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+            <mat-divider></mat-divider>
+          }
+        </div>
+
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>

@@ -1,0 +1,21 @@
+.settings-subpage {
+  max-width: 560px;
+  padding: 20px;
+  margin: 0 auto;        /* center the page */
+}
+.subpage-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
+  h2 { font-size: 20px; font-weight: 500; margin: 0; }
+}
+.form-card { border-radius: 10px; }
+.defaults-form { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; }
+.hint { font-size: 13px; color: #757575; margin: 0 0 12px; }
+.half-width { width: 220px; }
+.mt-8  { margin-top: 8px; }
+.mt-20 { margin-top: 20px; }
+.section-label {
+  font-size: 12px; font-weight: 600; color: #757575;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.radio-row { display: flex; gap: 20px; }
+.form-actions { display: flex; justify-content: flex-end; margin-top: 12px; }

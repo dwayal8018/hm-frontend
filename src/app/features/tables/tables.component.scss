@@ -1,0 +1,66 @@
+.tables-page {
+  width: 100%;
+  max-width: 100%;   // full width — important for waiter with collapsed sidebar
+  padding: 0;
+}
+
+.page-header {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 20px; flex-wrap: wrap;
+  h2 { font-size: 22px; font-weight: 500; flex: 1; margin: 0; }
+}
+
+.table-legend {
+  display: flex; align-items: center; gap: 12px; font-size: 13px; color: #616161;
+  .legend-dot {
+    display: inline-block; width: 12px; height: 12px; border-radius: 50%;
+    &.available { background-color: #4caf50; }
+    &.occupied  { background-color: #ff9800; }
+    &.billed    { background-color: #e91e63; }
+  }
+}
+
+.tables-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 16px;
+}
+
+.table-card {
+  cursor: pointer; text-align: center; border-radius: 10px;
+  transition: transform 0.15s, box-shadow 0.15s;
+  border-top: 4px solid transparent;
+
+  &:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
+
+  &.table-available { border-top-color: #4caf50; background: #f1f8e9; }
+  &.table-occupied  { border-top-color: #ff9800; background: #fff8e1; }
+  &.table-billed    { border-top-color: #e91e63; background: #fce4ec; }
+
+  mat-card-content  { padding: 16px !important; }
+
+  .table-number {
+    font-size: 24px; font-weight: 700; margin-bottom: 8px; color: #212121;
+  }
+  .table-capacity {
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+    font-size: 13px; color: #757575;
+    mat-icon { font-size: 16px; width: 16px; height: 16px; }
+  }
+  .table-floor { font-size: 11px; color: #9e9e9e; margin-top: 4px; }
+}
+
+.table-status-badge {
+  margin-top: 8px; font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.5px; border-radius: 8px;
+  padding: 2px 8px; display: inline-block;
+  &.badge-available { color: #2e7d32; background: #e8f5e9; }
+  &.badge-occupied  { color: #e65100; background: #fff3e0; }
+  &.badge-billed    { color: #c62828; background: #ffebee; }
+}
+
+.no-tables {
+  grid-column: 1 / -1; text-align: center; padding: 48px; color: #9e9e9e;
+  mat-icon { font-size: 56px; width: 56px; height: 56px; display: block; margin: 0 auto 12px; }
+  p { margin: 4px 0; }
+}

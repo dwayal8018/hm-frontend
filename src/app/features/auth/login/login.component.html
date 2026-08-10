@@ -1,0 +1,62 @@
+<div class="login-page">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <div class="login-header">
+        <mat-icon class="login-icon">hotel</mat-icon>
+        <h1 class="login-title">Hotel Manager</h1>
+        <p class="login-subtitle">Sign in to your restaurant account</p>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Restaurant Code</mat-label>
+          <input matInput formControlName="restaurantCode" placeholder="e.g. REST001" autocomplete="organization">
+          <mat-icon matSuffix>store</mat-icon>
+          <mat-error>Restaurant code is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width mt-16">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username" placeholder="Your username" autocomplete="username">
+          <mat-icon matSuffix>person</mat-icon>
+          <mat-error>Username is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width mt-16">
+          <mat-label>Password</mat-label>
+          <input matInput formControlName="password"
+                 [type]="hidePassword() ? 'password' : 'text'"
+                 autocomplete="current-password">
+          <button mat-icon-button matSuffix type="button"
+                  (click)="togglePasswordVisibility()"
+                  [attr.aria-label]="hidePassword() ? 'Show password' : 'Hide password'">
+            <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <mat-error>Password is required (min 6 characters)</mat-error>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit"
+                class="full-width mt-24 login-btn"
+                [disabled]="loading() || form.invalid">
+          <span *ngIf="loading()">
+            <mat-spinner diameter="20" class="spinner-inline"></mat-spinner>
+            Signing in...
+          </span>
+          <span *ngIf="!loading()">Sign In</span>
+        </button>
+
+      </form>
+    </mat-card-content>
+
+    <mat-card-footer class="login-footer">
+      <p>Need help? Contact your restaurant administrator</p>
+      <p class="register-link-row">
+        New restaurant?
+        <a routerLink="/auth/register" class="register-link">Register here</a>
+      </p>
+    </mat-card-footer>
+  </mat-card>
+</div>

@@ -1,0 +1,10 @@
+.settings-subpage { max-width: 700px; padding: 20px; }
+.subpage-header { display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
+  h2 { font-size: 20px; font-weight: 500; margin: 0; } }
+.form-card { border-radius: 10px; }
+.profile-form { display: flex; flex-direction: column; gap: 4px; padding-top: 8px; }
+.full-width { width: 100%; }
+.row-2col { display: flex; gap: 12px; .flex-1 { flex: 1; } }
+.section-label { font-size: 12px; font-weight: 600; color: #757575; text-transform: uppercase;
+  letter-spacing: 0.5px; margin-bottom: 8px; &.mt-16 { margin-top: 16px; } }
+.form-actions { display: flex; justify-content: flex-end; margin-top: 8px; }

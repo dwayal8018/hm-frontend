@@ -1,0 +1,115 @@
+<h2 mat-dialog-title>Generate Bill</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="bill-form">
+
+    <!-- Order summary -->
+    <div class="summary-box">
+      <div class="summary-row">
+        <span>{{ data.order.items.length }} items</span>
+        <span class="subtotal">₹{{ subtotal | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <mat-divider class="my-12"></mat-divider>
+
+    <!-- Discount type toggle -->
+    <div class="section-label">Discount</div>
+    <mat-radio-group formControlName="discountType" class="radio-row"
+                     (change)="onDiscountTypeChange()">
+      <mat-radio-button value="percent">By %</mat-radio-button>
+      <mat-radio-button value="amount">By ₹</mat-radio-button>
+    </mat-radio-group>
+
+    <div class="row-2col">
+      @if (form.value.discountType === 'percent') {
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Discount %</mat-label>
+          <input matInput formControlName="discountPercent" type="number"
+                 min="0" max="100" step="1">
+          <span matTextSuffix>%</span>
+          <mat-error>0–100 only</mat-error>
+        </mat-form-field>
+      } @else {
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Discount Amount</mat-label>
+          <input matInput formControlName="discountAmount" type="number" min="0">
+          <span matTextPrefix>₹&nbsp;</span>
+        </mat-form-field>
+      }
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Tax / GST %</mat-label>
+        <input matInput formControlName="taxPercent" type="number" min="0" max="100" step="0.5">
+        <span matTextSuffix>%</span>
+      </mat-form-field>
+    </div>
+
+    <!-- Live total preview -->
+    <div class="totals-preview">
+      <div class="preview-row">
+        <span>Subtotal</span>
+        <span>₹{{ subtotal | number:'1.2-2' }}</span>
+      </div>
+      @if (discountAmt > 0) {
+        <div class="preview-row discount">
+          <span>Discount</span>
+          <span>− ₹{{ discountAmt | number:'1.2-2' }}</span>
+        </div>
+      }
+      @if (taxAmt > 0) {
+        <div class="preview-row tax">
+          <span>GST ({{ form.value.taxPercent }}%)</span>
+          <span>₹{{ taxAmt | number:'1.2-2' }}</span>
+        </div>
+      }
+      <mat-divider></mat-divider>
+      <div class="preview-row total">
+        <span>Total</span>
+        <span>₹{{ grandTotal | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <mat-divider class="my-12"></mat-divider>
+
+    <!-- Payment method -->
+    <div class="section-label">Payment Method</div>
+    <div class="payment-grid">
+      @for (pm of paymentMethods; track pm.value) {
+        <button type="button" class="payment-btn"
+                [class.selected]="form.value.paymentMethod === pm.value"
+                (click)="form.patchValue({ paymentMethod: pm.value })">
+          <mat-icon>{{ pm.icon }}</mat-icon>
+          <span>{{ pm.label }}</span>
+        </button>
+      }
+    </div>
+
+    <mat-divider class="my-12"></mat-divider>
+
+    <!-- Optional customer info -->
+    <div class="section-label">Customer <span class="optional">(optional)</span></div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Customer Name</mat-label>
+      <input matInput formControlName="customerName" placeholder="Walk-in Guest">
+      <mat-icon matSuffix>person</mat-icon>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width mt-4">
+      <mat-label>Phone Number</mat-label>
+      <input matInput formControlName="customerPhone" placeholder="10-digit number" inputmode="numeric" maxlength="10">
+      <mat-icon matSuffix>phone</mat-icon>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="cancel()" [disabled]="saving">Cancel</button>
+  <button mat-raised-button color="primary" (click)="generate()"
+          [disabled]="form.invalid || saving">
+    @if (saving) {
+      <mat-spinner diameter="18" style="display:inline-block;margin-right:6px"></mat-spinner>
+    }
+    Generate Bill — ₹{{ grandTotal | number:'1.0-0' }}
+  </button>
+</mat-dialog-actions>

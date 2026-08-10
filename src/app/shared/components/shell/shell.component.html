@@ -1,0 +1,61 @@
+<mat-sidenav-container class="shell-container">
+
+  <mat-sidenav mode="side" [opened]="sidenavOpen()" class="shell-sidenav">
+
+    <div class="sidenav-header">
+      <mat-icon class="logo-icon">hotel</mat-icon>
+      <span class="restaurant-name">{{ restaurantName }}</span>
+    </div>
+
+    <mat-nav-list>
+      @for (item of visibleNavItems; track item.route) {
+        <a mat-list-item [routerLink]="item.route"
+           routerLinkActive="active-nav-item">
+          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          <span matListItemTitle>{{ item.label }}</span>
+        </a>
+      }
+    </mat-nav-list>
+
+    @if (subscriptionStatus === 'EXPIRING_SOON') {
+      <div class="subscription-warning sidenav-sub-warning">
+        <mat-icon>warning</mat-icon> Expires in {{ daysRemaining }} days
+      </div>
+    }
+    @if (subscriptionStatus === 'EXPIRED') {
+      <div class="subscription-expired sidenav-sub-warning">
+        <mat-icon>block</mat-icon> Subscription expired
+      </div>
+    }
+
+  </mat-sidenav>
+
+  <mat-sidenav-content class="shell-content">
+
+    <mat-toolbar color="primary" class="shell-toolbar">
+      <button mat-icon-button (click)="toggleSidenav()" aria-label="Toggle menu">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span class="toolbar-spacer"></span>
+      <span class="user-info">
+        <mat-icon>person</mat-icon>
+        {{ userName }}
+        <mat-chip class="role-chip"
+          [class.chip-owner]="userRole === 'OWNER'"
+          [class.chip-manager]="userRole === 'MANAGER'"
+          [class.chip-waiter]="userRole === 'WAITER'">
+          {{ userRole }}
+        </mat-chip>
+      </span>
+      <button mat-icon-button (click)="logout()" matTooltip="Logout" aria-label="Logout">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </mat-toolbar>
+
+    <div class="page-content">
+      <router-outlet />
+    </div>
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

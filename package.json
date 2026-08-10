@@ -1,0 +1,80 @@
+{
+  "name": "hotel-management-frontend",
+  "version": "1.0.0",
+  "description": "Hotel/Restaurant Management - Angular + Electron Desktop App",
+  "main": "electron/main.js",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --port 4200",
+    "build": "ng build",
+    "build:prod": "ng build --configuration production",
+    "electron:dev": "concurrently \"ng serve --port 4200\" \"wait-on http://localhost:4200 && electron .\"",
+    "electron:build": "ng build --configuration production && electron-builder build --win",
+    "electron:build:mac": "ng build --configuration production && electron-builder build --mac",
+    "electron:build:linux": "ng build --configuration production && electron-builder build --linux",
+    "lint": "ng lint"
+  },
+  "build": {
+    "appId": "com.hotelmanagement.app",
+    "productName": "Hotel Manager",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "dist/frontend/**/*",
+      "electron/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../backend-local/target/backend-local.jar",
+        "to": "backend/backend-local.jar"
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "src/assets/icons/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "src/assets/icons/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "src/assets/icons/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "dependencies": {
+    "@angular/animations": "^17.3.0",
+    "@angular/cdk": "^17.3.0",
+    "@angular/common": "^17.3.0",
+    "@angular/compiler": "^17.3.0",
+    "@angular/core": "^17.3.0",
+    "@angular/forms": "^17.3.0",
+    "@angular/material": "^17.3.0",
+    "@angular/platform-browser": "^17.3.0",
+    "@angular/platform-browser-dynamic": "^17.3.0",
+    "@angular/router": "^17.3.0",
+    "qrcode": "^1.5.4",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.6.0",
+    "zone.js": "~0.14.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^17.3.0",
+    "@angular/cli": "^17.3.0",
+    "@angular/compiler-cli": "^17.3.0",
+    "@types/node": "^20.11.0",
+    "@types/qrcode": "^1.5.6",
+    "concurrently": "^8.2.2",
+    "electron": "^29.1.0",
+    "electron-builder": "^24.9.1",
+    "typescript": "~5.4.0",
+    "wait-on": "^7.2.0"
+  }
+}

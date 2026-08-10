@@ -1,0 +1,44 @@
+<div class="billing-page">
+  <div class="page-header">
+    <h2>Billing History</h2>
+    <button mat-stroked-button (click)="loadHistory()"><mat-icon>refresh</mat-icon> Refresh</button>
+  </div>
+
+  @if (loading) { <mat-progress-bar mode="indeterminate"></mat-progress-bar> }
+
+  @if (error) {
+    <mat-card class="error-card">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <p>Could not load billing history.</p>
+      <button mat-raised-button color="primary" (click)="loadHistory()">Retry</button>
+    </mat-card>
+  }
+
+  <div class="bills-list">
+    @for (order of orders; track order.id) {
+      <mat-card class="bill-card" [routerLink]="['/billing', order.id]">
+        <mat-card-content>
+          <div class="bill-row">
+            <mat-icon class="bill-icon">receipt_long</mat-icon>
+            <div class="bill-info">
+              <div class="bill-table">Table {{ order.tableNumber }}</div>
+              <div class="bill-time">{{ order.createdAt | date:'dd MMM, hh:mm a' }}</div>
+            </div>
+            <div class="bill-items">{{ order.items.length  }} items</div>
+            <div class="bill-amount">&#8377;{{ order.totalAmount | number:'1.0-0' }}</div>
+            <mat-chip class="status-chip" [class]="'chip-' + order.status.toLowerCase()">
+              {{ order.status }}
+            </mat-chip>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    } @empty {
+      @if (!loading) {
+        <div class="empty-billing">
+          <mat-icon>receipt_long</mat-icon>
+          <p>No billing records yet.</p>
+        </div>
+      }
+    }
+  </div>
+</div>

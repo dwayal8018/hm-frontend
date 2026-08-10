@@ -1,0 +1,257 @@
+<div class="register-page">
+
+  <!-- ── SUCCESS SCREEN ────────────────────────────────────────── -->
+  <mat-card class="register-card" *ngIf="restaurantCode(); else formCard">
+    <mat-card-content>
+      <div class="success-screen">
+        <div class="success-icon-wrap">
+          <mat-icon class="success-icon">check_circle</mat-icon>
+        </div>
+        <h2 class="success-title">Registration Successful!</h2>
+        <p class="success-subtitle">Your restaurant account has been created. Save your restaurant code — you'll need it every time you log in.</p>
+
+        <div class="code-box">
+          <span class="code-label">Your Restaurant Code</span>
+          <div class="code-value-row">
+            <span class="code-value">{{ restaurantCode() }}</span>
+            <button mat-icon-button (click)="copyCode()" matTooltip="Copy code" aria-label="Copy restaurant code">
+              <mat-icon>content_copy</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="success-hint">
+          <mat-icon class="hint-icon">info</mat-icon>
+          <span>Username: <strong>owner</strong> &nbsp;|&nbsp; Password: the one you just set</span>
+        </div>
+
+        <button mat-raised-button color="primary" class="full-width go-login-btn" (click)="goToLogin()">
+          <mat-icon>login</mat-icon>
+          Go to Login
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- ── REGISTRATION FORM ──────────────────────────────────────── -->
+  <ng-template #formCard>
+    <mat-card class="register-card">
+      <mat-card-header>
+        <div class="register-header">
+          <mat-icon class="register-icon">hotel</mat-icon>
+          <h1 class="register-title">Hotel Manager</h1>
+          <p class="register-subtitle">Register your restaurant</p>
+        </div>
+      </mat-card-header>
+
+      <mat-card-content>
+        <mat-stepper linear #stepper orientation="horizontal" class="register-stepper">
+
+          <!-- ── STEP 1: Restaurant Details ───────────────────────── -->
+          <mat-step [stepControl]="restaurantForm" label="Restaurant">
+            <form [formGroup]="restaurantForm">
+              <div class="step-content">
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Restaurant Name</mat-label>
+                  <input matInput formControlName="restaurantName" placeholder="e.g. Hotel Sunshine" autocomplete="organization">
+                  <mat-icon matSuffix>store</mat-icon>
+                  <mat-error *ngIf="restaurantForm.get('restaurantName')?.hasError('required')">Name is required</mat-error>
+                  <mat-error *ngIf="restaurantForm.get('restaurantName')?.hasError('minlength')">Minimum 2 characters</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width mt-12">
+                  <mat-label>Phone Number</mat-label>
+                  <input matInput formControlName="phone" placeholder="10-digit mobile number" maxlength="10" inputmode="numeric">
+                  <mat-icon matSuffix>phone</mat-icon>
+                  <mat-error *ngIf="restaurantForm.get('phone')?.hasError('required')">Phone is required</mat-error>
+                  <mat-error *ngIf="restaurantForm.get('phone')?.hasError('pattern')">Enter a valid 10-digit number</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width mt-12">
+                  <mat-label>Address <span class="optional">(optional)</span></mat-label>
+                  <textarea matInput formControlName="address" rows="2" placeholder="Street, City, State"></textarea>
+                  <mat-icon matSuffix>location_on</mat-icon>
+                </mat-form-field>
+
+                <div class="row-2col">
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>UPI ID <span class="optional">(optional)</span></mat-label>
+                    <input matInput formControlName="upiId" placeholder="name@upi">
+                    <mat-icon matSuffix>payment</mat-icon>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>GST Number <span class="optional">(optional)</span></mat-label>
+                    <input matInput formControlName="gstNumber" placeholder="29ABCDE1234F1Z5" maxlength="15" style="text-transform:uppercase">
+                    <mat-icon matSuffix>receipt_long</mat-icon>
+                  </mat-form-field>
+                </div>
+
+                <div class="step-actions">
+                  <button mat-raised-button color="primary" matStepperNext type="button"
+                          [disabled]="restaurantForm.invalid">
+                    Next <mat-icon>chevron_right</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </mat-step>
+
+          <!-- ── STEP 2: Owner Account ─────────────────────────────── -->
+          <mat-step [stepControl]="ownerForm" label="Owner">
+            <form [formGroup]="ownerForm">
+              <div class="step-content">
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Owner Full Name</mat-label>
+                  <input matInput formControlName="ownerName" placeholder="Your full name" autocomplete="name">
+                  <mat-icon matSuffix>badge</mat-icon>
+                  <mat-error>Name is required (min 2 characters)</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width mt-12">
+                  <mat-label>Owner Email</mat-label>
+                  <input matInput formControlName="ownerEmail" type="email" placeholder="you@example.com" autocomplete="email">
+                  <mat-icon matSuffix>email</mat-icon>
+                  <mat-error *ngIf="ownerForm.get('ownerEmail')?.hasError('required')">Email is required</mat-error>
+                  <mat-error *ngIf="ownerForm.get('ownerEmail')?.hasError('email')">Enter a valid email address</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width mt-12">
+                  <mat-label>Password</mat-label>
+                  <input matInput formControlName="ownerPassword"
+                         [type]="hidePassword() ? 'password' : 'text'"
+                         autocomplete="new-password">
+                  <button mat-icon-button matSuffix type="button" (click)="togglePassword()"
+                          [attr.aria-label]="hidePassword() ? 'Show password' : 'Hide password'">
+                    <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                  </button>
+                  <mat-hint>Minimum 8 characters</mat-hint>
+                  <mat-error *ngIf="ownerForm.get('ownerPassword')?.hasError('required')">Password is required</mat-error>
+                  <mat-error *ngIf="ownerForm.get('ownerPassword')?.hasError('minlength')">Minimum 8 characters</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width mt-12">
+                  <mat-label>Confirm Password</mat-label>
+                  <input matInput formControlName="confirmPassword"
+                         [type]="hideConfirm() ? 'password' : 'text'"
+                         autocomplete="new-password">
+                  <button mat-icon-button matSuffix type="button" (click)="toggleConfirm()"
+                          [attr.aria-label]="hideConfirm() ? 'Show password' : 'Hide password'">
+                    <mat-icon>{{ hideConfirm() ? 'visibility_off' : 'visibility' }}</mat-icon>
+                  </button>
+                  <mat-error *ngIf="ownerForm.hasError('passwordMismatch')">Passwords do not match</mat-error>
+                </mat-form-field>
+
+                <div class="step-actions">
+                  <button mat-stroked-button matStepperPrevious type="button">
+                    <mat-icon>chevron_left</mat-icon> Back
+                  </button>
+                  <button mat-raised-button color="primary" matStepperNext type="button"
+                          [disabled]="ownerForm.invalid">
+                    Next <mat-icon>chevron_right</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </mat-step>
+
+          <!-- ── STEP 3: Plan & Roles ──────────────────────────────── -->
+          <mat-step [stepControl]="planForm" label="Plan">
+            <form [formGroup]="planForm">
+              <div class="step-content">
+
+                <!-- Plan selection -->
+                <p class="section-label">Select Subscription Plan</p>
+                <div class="plan-grid">
+                  <div *ngFor="let plan of plans"
+                       class="plan-card"
+                       [class.selected]="planForm.value.planType === plan.value"
+                       (click)="planForm.patchValue({ planType: plan.value })"
+                       role="radio"
+                       [attr.aria-checked]="planForm.value.planType === plan.value"
+                       tabindex="0"
+                       (keydown.enter)="planForm.patchValue({ planType: plan.value })"
+                       (keydown.space)="planForm.patchValue({ planType: plan.value })">
+                    <mat-icon class="plan-icon">calendar_month</mat-icon>
+                    <span class="plan-name">{{ plan.label }}</span>
+                    <span class="plan-days">{{ plan.days }} days</span>
+                  </div>
+                </div>
+
+                <mat-divider class="divider"></mat-divider>
+
+                <!-- Role selection -->
+                <p class="section-label">Staff Roles Needed</p>
+                <div class="role-grid">
+                  <div *ngFor="let r of roleOptions"
+                       class="role-card"
+                       [class.selected]="isRoleSelected(r.value)"
+                       [class.locked]="r.value === 'OWNER'"
+                       (click)="toggleRole(r.value)"
+                       role="checkbox"
+                       [attr.aria-checked]="isRoleSelected(r.value)"
+                       tabindex="0"
+                       (keydown.enter)="toggleRole(r.value)"
+                       (keydown.space)="toggleRole(r.value)">
+                    <div class="role-check">
+                      <mat-icon>{{ isRoleSelected(r.value) ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
+                    </div>
+                    <div class="role-info">
+                      <span class="role-name">{{ r.label }}</span>
+                      <span class="role-hint">{{ r.hint }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <mat-divider class="divider"></mat-divider>
+
+                <!-- Payment details (optional) -->
+                <div class="row-2col">
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>Amount Paid <span class="optional">(optional)</span></mat-label>
+                    <input matInput formControlName="amountPaid" type="number" placeholder="0.00" min="0">
+                    <span matTextPrefix>₹&nbsp;</span>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>Payment Ref <span class="optional">(optional)</span></mat-label>
+                    <input matInput formControlName="paymentRef" placeholder="UPI/cheque ref">
+                    <mat-icon matSuffix>receipt</mat-icon>
+                  </mat-form-field>
+                </div>
+
+                <div class="step-actions">
+                  <button mat-stroked-button matStepperPrevious type="button">
+                    <mat-icon>chevron_left</mat-icon> Back
+                  </button>
+                  <button mat-raised-button color="primary" type="button"
+                          [disabled]="loading() || planForm.invalid"
+                          (click)="onSubmit()">
+                    <span *ngIf="loading()">
+                      <mat-spinner diameter="18" class="spinner-inline"></mat-spinner>
+                      Registering...
+                    </span>
+                    <span *ngIf="!loading()">
+                      <mat-icon>how_to_reg</mat-icon>
+                      Register Restaurant
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </mat-step>
+
+        </mat-stepper>
+      </mat-card-content>
+
+      <mat-card-footer class="register-footer">
+        <p>Already have an account?
+          <a routerLink="/auth/login" class="login-link">Sign in</a>
+        </p>
+      </mat-card-footer>
+    </mat-card>
+  </ng-template>
+
+</div>
