@@ -96,6 +96,15 @@ export class AuthService {
     return !!user && roles.includes(user.role);
   }
 
+  /** Call this after updating the restaurant profile so enabledRoles reflects immediately */
+  updateRestaurantInfo(partial: Partial<RestaurantInfo>): void {
+    const current = this.restaurantInfo();
+    if (!current) return;
+    const updated = { ...current, ...partial };
+    this.restaurantInfo.set(updated);
+    localStorage.setItem(REST_KEY, JSON.stringify(updated));
+  }
+
   refreshSubscription(): Observable<SubscriptionInfo> {
     return this.http.get<{ success: boolean; data: SubscriptionInfo }>(`${environment.cloudApiUrl}/subscription/status`).pipe(
       map(r => r.data),

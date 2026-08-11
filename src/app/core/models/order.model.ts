@@ -11,6 +11,8 @@ export interface DiningTable {
   floor?: string;
 }
 
+export type KitchenStatus = 'PENDING' | 'COOKING' | 'READY';
+
 export interface OrderItem {
   id?: number;
   menuItemId: number;
@@ -20,6 +22,7 @@ export interface OrderItem {
   totalPrice: number;
   foodType: 'VEG' | 'NON_VEG' | 'EGG';
   notes?: string;
+  kitchenStatus?: KitchenStatus;
 }
 
 export interface Order {

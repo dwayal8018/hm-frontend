@@ -13,6 +13,7 @@
       <form [formGroup]="form" (ngSubmit)="save()" class="profile-form">
 
         <div class="section-label">Restaurant Info</div>
+
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Restaurant Name</mat-label>
           <input matInput formControlName="restaurantName">
@@ -53,7 +54,9 @@
           </mat-form-field>
         </div>
 
-        <div class="section-label mt-16">Owner Info</div>
+        <mat-divider class="mt-16 mb-16"></mat-divider>
+
+        <div class="section-label">Owner Info</div>
         <div class="row-2col">
           <mat-form-field appearance="outline" class="flex-1">
             <mat-label>Owner Name</mat-label>
@@ -67,6 +70,38 @@
             <mat-icon matSuffix>email</mat-icon>
             <mat-error>Valid email required</mat-error>
           </mat-form-field>
+        </div>
+
+        <mat-divider class="mt-16 mb-16"></mat-divider>
+
+        <!-- Staff Roles Section -->
+        <div class="section-label">Staff Roles</div>
+        <p class="roles-hint">Enable the roles your restaurant uses. Staff can only be assigned enabled roles.</p>
+
+        <div class="roles-grid">
+          @for (role of allRoles; track role.value) {
+            <div class="role-card"
+                 [class.enabled]="isRoleEnabled(role.value)"
+                 [class.locked]="role.locked"
+                 (click)="toggleRole(role.value)"
+                 [attr.role]="'checkbox'"
+                 [attr.aria-checked]="isRoleEnabled(role.value)"
+                 [attr.tabindex]="role.locked ? -1 : 0"
+                 (keydown.enter)="toggleRole(role.value)"
+                 (keydown.space)="toggleRole(role.value)">
+              <div class="role-check">
+                <mat-icon>{{ isRoleEnabled(role.value) ? 'check_box' : 'check_box_outline_blank' }}</mat-icon>
+              </div>
+              <mat-icon class="role-icon">{{ role.icon }}</mat-icon>
+              <div class="role-info">
+                <span class="role-name">{{ role.label }}</span>
+                <span class="role-hint">{{ role.hint }}</span>
+              </div>
+              @if (role.locked) {
+                <span class="locked-badge">Required</span>
+              }
+            </div>
+          }
         </div>
 
         <div class="form-actions">

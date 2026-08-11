@@ -49,7 +49,9 @@ export class LoginComponent {
         this.loading.set(false);
         // Waiters go straight to tables — they have no dashboard access
         const role       = this.auth.user()?.role;
-        const defaultUrl = role === 'WAITER' ? '/tables' : '/dashboard';
+        const defaultUrl = role === 'WAITER' ? '/tables'
+                         : role === 'CHEF'   ? '/kitchen'
+                         : '/dashboard';
         const returnUrl  = this.route.snapshot.queryParams['returnUrl'] || defaultUrl;
         this.router.navigateByUrl(returnUrl, { replaceUrl: true });
       },

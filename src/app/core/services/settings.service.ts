@@ -15,6 +15,7 @@ export interface RestaurantProfile {
   logoUrl: string;
   ownerName: string;
   ownerEmail: string;
+  enabledRoles: string[];
 }
 
 export interface AppUser {

@@ -1,45 +1,129 @@
+// ── Shell layout ──────────────────────────────────────────────────────────────
 .shell-container { height: 100vh; }
 
+// ── Sidenav — warm cream sidebar ─────────────────────────────────────────────
 .shell-sidenav {
   width: 230px;
-  background-color: #fff;
-  border-right: 1px solid #e0e0e0;
+  background-color: #fdf6f0;   // warm cream/ivory — light, warm, not harsh
+  border-right: 1px solid #eeddd0;
 
+  // Brand header — orange background, white text
   .sidenav-header {
-    display: flex; align-items: center; gap: 10px;
-    padding: 16px; background-color: #bf360c; color: #fff;
-    .logo-icon { font-size: 28px; }
-    .restaurant-name { font-size: 15px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 16px;
+    background-color: #e64a19;   // warm orange — brand color
+    border-bottom: none;
+
+    .logo-icon {
+      font-size: 26px;
+      width: 26px;
+      height: 26px;
+      color: #ffffff;
+    }
+
+    .restaurant-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #ffffff;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      letter-spacing: 0.2px;
+    }
   }
 
+  // Nav items — warm dark brown text on cream bg
+  mat-nav-list {
+    padding-top: 8px;
+
+    a[mat-list-item] {
+      color: #5d3a1a;              // warm dark brown — readable on cream
+      border-radius: 0;
+      margin: 1px 8px;
+      border-radius: 6px;
+      transition: background 0.15s, color 0.15s;
+
+      mat-icon { color: #a0704a; } // medium warm brown icon
+
+      &:hover {
+        background-color: #f5e6d8;
+        color: #bf360c;
+        mat-icon { color: #bf360c; }
+      }
+    }
+  }
+
+  // Active nav item
   .active-nav-item {
-    background-color: #fbe9e7; color: #bf360c; border-left: 3px solid #bf360c;
-    mat-icon { color: #bf360c; }
+    background-color: #fbe9e7 !important;  // very light orange tint
+    color: #bf360c !important;
+    border-left: 3px solid #e64a19;
+    margin-left: 5px !important;
+
+    mat-icon { color: #bf360c !important; }
   }
 
+  // Subscription warning at bottom
   .sidenav-sub-warning {
-    position: absolute; bottom: 0; left: 0; right: 0;
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
     display: flex; align-items: center; gap: 6px;
-    font-size: 13px; padding: 10px 16px;
-    mat-icon { font-size: 18px; }
+    font-size: 12px; padding: 10px 16px;
+    mat-icon { font-size: 16px; }
+    background-color: #fff3e0;
+    color: #e65100;
+    border-top: 1px solid #ffe0b2;
   }
 }
 
+// ── Toolbar — white with left-border accent ───────────────────────────────────
 .shell-toolbar {
-  position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  background-color: #ffffff !important;
+  color: #212121 !important;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border-bottom: 1px solid #eeddd0;   // matches sidenav border — cohesive
+
   .toolbar-spacer { flex: 1 1 auto; }
-  .user-info { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #5d3a1a;
+    font-weight: 500;
+
+    mat-icon { color: #a0704a; font-size: 20px; }
+  }
+
   .role-chip {
-    font-size: 11px; height: 22px; min-height: 22px;
-    &.chip-owner   { background-color: #e8f5e9; color: #2e7d32; }
+    font-size: 11px;
+    height: 22px;
+    min-height: 22px;
+    font-weight: 600;
+
+    &.chip-owner   { background-color: #fbe9e7; color: #bf360c; }
     &.chip-manager { background-color: #e3f2fd; color: #1565c0; }
-    &.chip-waiter  { background-color: #fff3e0; color: #e65100; }
+    &.chip-waiter  { background-color: #f3e5f5; color: #6a1b9a; }
+    &.chip-chef    { background-color: #e8f5e9; color: #2e7d32; }
   }
 }
 
-.shell-content { display: flex; flex-direction: column; height: 100vh; }
+// ── Content area ──────────────────────────────────────────────────────────────
+.shell-content {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
 
 .page-content {
-  flex: 1; padding: 24px; overflow-y: auto; background-color: #f5f5f5;
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  background-color: #f5f5f5;
 }

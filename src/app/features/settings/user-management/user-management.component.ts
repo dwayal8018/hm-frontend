@@ -74,7 +74,7 @@ export class UserManagementComponent implements OnInit {
       next: (u) => {
         this.saving = false;
         this.users.push(u);
-        this.form.reset({ role: 'WAITER' });
+        this.form.reset({ role: this.addableRoles[0] ?? 'WAITER' });
         this.showAddForm = false;
         this.snackBar.open(`User "${u.username}" created`, '', { duration: 2500 });
       },

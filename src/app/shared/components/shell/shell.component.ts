@@ -26,20 +26,20 @@ interface NavItem { label: string; icon: string; route: string; roles: string[];
 export class ShellComponent {
   auth = inject(AuthService);
 
-  // Waiter: sidebar starts collapsed; Owner/Manager: starts open
-  sidenavOpen = signal(this.auth.user()?.role !== 'WAITER');
+  // CHEF/WAITER: sidebar starts collapsed; Owner/Manager: starts open
+  sidenavOpen = signal(!['WAITER', 'CHEF'].includes(this.auth.user()?.role ?? ''));
 
-  // To completely hide sidebar for waiters, change the condition above to:
+  // To completely hide sidebar for waiters/chefs, comment the line above and use:
   // sidenavOpen = signal(false);
-  // and in the template change [opened]="sidenavOpen()" to [opened]="sidenavOpen() && !isWaiter"
 
   get isWaiter(): boolean { return this.auth.user()?.role === 'WAITER'; }
+  get isChef():   boolean { return this.auth.user()?.role === 'CHEF'; }
 
   navItems: NavItem[] = [
-    { label: 'Dashboard', icon: 'dashboard',       route: '/dashboard', roles: ['OWNER', 'MANAGER'] },
-    { label: 'Tables',    icon: 'table_restaurant', route: '/tables',    roles: [] },
+    { label: 'Dashboard', icon: 'dashboard',        route: '/dashboard', roles: ['OWNER', 'MANAGER'] },
+    { label: 'Tables',    icon: 'table_restaurant', route: '/tables',    roles: ['OWNER', 'MANAGER', 'WAITER'] },
+    { label: 'Kitchen',   icon: 'restaurant',       route: '/kitchen',   roles: ['CHEF', 'OWNER', 'MANAGER'] },
     { label: 'Menu',      icon: 'restaurant_menu',  route: '/menu',      roles: ['OWNER', 'MANAGER'] },
-    // Billing: hidden for WAITER — waiter generates no bills, owner/manager handle billing
     { label: 'Billing',   icon: 'receipt_long',     route: '/billing',   roles: ['OWNER', 'MANAGER'] },
     { label: 'Reports',   icon: 'bar_chart',        route: '/reports',   roles: ['OWNER', 'MANAGER'] },
     { label: 'Settings',  icon: 'settings',         route: '/settings',  roles: ['OWNER'] }

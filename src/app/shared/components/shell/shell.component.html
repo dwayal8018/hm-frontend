@@ -18,12 +18,12 @@
     </mat-nav-list>
 
     @if (subscriptionStatus === 'EXPIRING_SOON') {
-      <div class="subscription-warning sidenav-sub-warning">
+      <div class="sidenav-sub-warning">
         <mat-icon>warning</mat-icon> Expires in {{ daysRemaining }} days
       </div>
     }
     @if (subscriptionStatus === 'EXPIRED') {
-      <div class="subscription-expired sidenav-sub-warning">
+      <div class="sidenav-sub-warning" style="color:#ff6b6b">
         <mat-icon>block</mat-icon> Subscription expired
       </div>
     }
@@ -32,7 +32,7 @@
 
   <mat-sidenav-content class="shell-content">
 
-    <mat-toolbar color="primary" class="shell-toolbar">
+    <mat-toolbar class="shell-toolbar">
       <button mat-icon-button (click)="toggleSidenav()" aria-label="Toggle menu">
         <mat-icon>menu</mat-icon>
       </button>
@@ -43,11 +43,13 @@
         <mat-chip class="role-chip"
           [class.chip-owner]="userRole === 'OWNER'"
           [class.chip-manager]="userRole === 'MANAGER'"
-          [class.chip-waiter]="userRole === 'WAITER'">
+          [class.chip-waiter]="userRole === 'WAITER'"
+          [class.chip-chef]="userRole === 'CHEF'">
           {{ userRole }}
         </mat-chip>
       </span>
-      <button mat-icon-button (click)="logout()" matTooltip="Logout" aria-label="Logout">
+      <button mat-icon-button (click)="logout()" matTooltip="Logout" aria-label="Logout"
+              style="color:#424242">
         <mat-icon>logout</mat-icon>
       </button>
     </mat-toolbar>

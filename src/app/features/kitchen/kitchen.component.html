@@ -1,0 +1,106 @@
+<div class="kitchen-page">
+  <div class="kitchen-header">
+    <div class="header-left">
+      <mat-icon class="kitchen-icon">restaurant</mat-icon>
+      <h2>Kitchen Display</h2>
+    </div>
+    <div class="header-right">
+      <span class="order-count">{{ orders.length }} active order{{ orders.length !== 1 ? 's' : '' }}</span>
+      <button mat-icon-button (click)="loadOrders()" matTooltip="Refresh" aria-label="Refresh">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  @if (loading) { <mat-progress-bar mode="indeterminate"></mat-progress-bar> }
+
+  @if (!loading && orders.length === 0) {
+    <div class="empty-kitchen">
+      <mat-icon>check_circle</mat-icon>
+      <h3>All caught up!</h3>
+      <p>No pending orders. Screen refreshes automatically every 15 seconds.</p>
+    </div>
+  }
+
+  <div class="orders-grid">
+    @for (order of orders; track order.id) {
+      <mat-card class="order-card">
+        <mat-card-header>
+          <div class="order-card-header">
+            <span class="table-label">Table {{ order.tableNumber }}</span>
+            <span class="order-time">{{ order.createdAt | date:'hh:mm a' }}</span>
+          </div>
+        </mat-card-header>
+
+        <mat-card-content>
+
+          <!-- PENDING items -->
+          @if (pendingItems(order).length > 0) {
+            <div class="items-section pending-section">
+              <div class="section-label">
+                <mat-icon>pending</mat-icon> New ({{ pendingItems(order).length }})
+              </div>
+              @for (item of pendingItems(order); track item.id) {
+                <div class="item-row">
+                  <span class="food-dot"
+                        [class.veg]="item.foodType === 'VEG'"
+                        [class.nonveg]="item.foodType === 'NON_VEG'"
+                        [class.egg]="item.foodType === 'EGG'">
+                  </span>
+                  <span class="item-qty">×{{ item.quantity }}</span>
+                  <span class="item-name">{{ item.menuItemName }}</span>
+                  @if (item.notes) { <span class="item-note">· {{ item.notes }}</span> }
+                  <button mat-stroked-button class="status-btn cooking-btn"
+                          (click)="markCooking(item)">
+                    Start Cooking
+                  </button>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- COOKING items -->
+          @if (cookingItems(order).length > 0) {
+            <div class="items-section cooking-section">
+              <div class="section-label cooking-label">
+                <mat-icon>local_fire_department</mat-icon> Cooking ({{ cookingItems(order).length }})
+              </div>
+              @for (item of cookingItems(order); track item.id) {
+                <div class="item-row">
+                  <span class="food-dot"
+                        [class.veg]="item.foodType === 'VEG'"
+                        [class.nonveg]="item.foodType === 'NON_VEG'"
+                        [class.egg]="item.foodType === 'EGG'">
+                  </span>
+                  <span class="item-qty">×{{ item.quantity }}</span>
+                  <span class="item-name">{{ item.menuItemName }}</span>
+                  @if (item.notes) { <span class="item-note">· {{ item.notes }}</span> }
+                  <button mat-raised-button color="primary" class="status-btn ready-btn"
+                          (click)="markReady(item)">
+                    <mat-icon>check</mat-icon> Ready
+                  </button>
+                </div>
+              }
+            </div>
+          }
+
+          <!-- READY items (dimmed) -->
+          @if (readyItems(order).length > 0) {
+            <div class="items-section ready-section">
+              <div class="section-label ready-label">
+                <mat-icon>check_circle</mat-icon> Ready ({{ readyItems(order).length }})
+              </div>
+              @for (item of readyItems(order); track item.id) {
+                <div class="item-row ready-row">
+                  <span class="item-qty">×{{ item.quantity }}</span>
+                  <span class="item-name">{{ item.menuItemName }}</span>
+                </div>
+              }
+            </div>
+          }
+
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+</div>

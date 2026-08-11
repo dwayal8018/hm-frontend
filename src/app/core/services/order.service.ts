@@ -64,4 +64,13 @@ export class OrderService {
   getBillHistory(page = 0, size = 20): Observable<PageResponse<Order>> {
     return this.http.get<ApiResponse<PageResponse<Order>>>(`${this.base}/billing/history?page=${page}&size=${size}`).pipe(map(r => r.data));
   }
+
+  // ── Kitchen ───────────────────────────────────────────────────────────────
+  getKitchenOrders(): Observable<Order[]> {
+    return this.http.get<ApiResponse<Order[]>>(`${this.base}/kitchen/orders`).pipe(map(r => r.data));
+  }
+
+  updateKitchenStatus(itemId: number, status: string): Observable<any> {
+    return this.http.patch<ApiResponse<any>>(`${this.base}/kitchen/items/${itemId}/status`, { status }).pipe(map(r => r.data));
+  }
 }

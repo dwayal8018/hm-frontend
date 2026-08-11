@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard, subscriptionGuard, roleGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: '', redirectTo: 'tables', pathMatch: 'full' },
   {
     path: 'auth',
     loadChildren: () => import('./features/auth/auth.routes').then(m => m.authRoutes)
@@ -23,12 +23,19 @@ export const routes: Routes = [
       },
       {
         path: 'tables',
+        canActivate: [roleGuard(['OWNER', 'MANAGER', 'WAITER'])],
         loadComponent: () => import('./features/tables/tables.component').then(m => m.TablesComponent)
       },
       {
         path: 'tables/:id/order',
+        canActivate: [roleGuard(['OWNER', 'MANAGER', 'WAITER'])],
         loadComponent: () => import('./features/tables/components/table-order/table-order.component')
           .then(m => m.TableOrderComponent)
+      },
+      {
+        path: 'kitchen',
+        canActivate: [roleGuard(['CHEF', 'OWNER', 'MANAGER'])],
+        loadComponent: () => import('./features/kitchen/kitchen.component').then(m => m.KitchenComponent)
       },
       {
         path: 'menu',

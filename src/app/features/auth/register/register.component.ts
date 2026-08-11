@@ -76,7 +76,8 @@ export class RegisterComponent {
   readonly roleOptions = [
     { value: 'OWNER',   label: 'Owner',   hint: 'Full access' },
     { value: 'MANAGER', label: 'Manager', hint: 'Menu, billing, reports' },
-    { value: 'WAITER',  label: 'Waiter',  hint: 'Tables & order entry' }
+    { value: 'WAITER',  label: 'Waiter',  hint: 'Tables & order entry' },
+    { value: 'CHEF',    label: 'Chef',    hint: 'Kitchen display — sees all orders' }
   ];
 
   isRoleSelected(role: string): boolean {

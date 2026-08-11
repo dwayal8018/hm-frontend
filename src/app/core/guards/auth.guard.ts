@@ -33,7 +33,11 @@ export const roleGuard = (allowedRoles: string[]): CanActivateFn => () => {
   if (!auth.hasRole(...allowedRoles)) {
     // Redirect waiter to tables; others to dashboard
     const role = auth.user()?.role;
-    router.navigate([role === 'WAITER' ? '/tables' : '/dashboard']);
+    router.navigate([
+      role === 'WAITER' ? '/tables' :
+      role === 'CHEF'   ? '/kitchen' :
+      '/dashboard'
+    ]);
     return false;
   }
   return true;
