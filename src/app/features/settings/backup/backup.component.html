@@ -1,0 +1,128 @@
+<div class="settings-subpage">
+  <div class="subpage-header">
+    <button mat-icon-button routerLink="/settings" aria-label="Back"><mat-icon>arrow_back</mat-icon></button>
+    <h2>Data Backup</h2>
+  </div>
+
+  @if (loadingStatus) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
+
+  <!-- DB Health card -->
+  @if (status) {
+    <mat-card class="status-card" [class.warn]="status.level === 'WARNING'" [class.critical]="status.level === 'CRITICAL'">
+      <mat-card-header>
+        <mat-icon mat-card-avatar [class]="levelColor">
+          {{ status.level === 'OK' ? 'check_circle' : status.level === 'WARNING' ? 'warning' : 'error' }}
+        </mat-icon>
+        <mat-card-title>Storage Health</mat-card-title>
+        <mat-card-subtitle>{{ status.message }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="usage-bar-label">
+          <span>{{ status.dbSizeMb }} MB used</span>
+          <span>Archive at {{ status.archiveThresholdMb }} MB</span>
+        </div>
+        <mat-progress-bar
+          mode="determinate"
+          [value]="usagePercent"
+          [color]="status.level === 'OK' ? 'primary' : 'warn'">
+        </mat-progress-bar>
+
+        <div class="stats-row">
+          <div class="stat">
+            <mat-icon>storage</mat-icon>
+            <span>{{ status.dbSizeMb }} MB</span>
+            <label>Database size</label>
+          </div>
+          <div class="stat">
+            <mat-icon>folder_copy</mat-icon>
+            <span>{{ status.backupCount }}</span>
+            <label>Backups on disk</label>
+          </div>
+          <div class="stat">
+            <mat-icon>save</mat-icon>
+            <span>{{ status.backupsTotalMb }} MB</span>
+            <label>Backups total size</label>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- Backup action card -->
+  <mat-card class="action-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>backup</mat-icon>
+      <mat-card-title>Manual Backup</mat-card-title>
+      <mat-card-subtitle>Take an instant backup of all your data right now</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p class="info-text">
+        Backups are also taken automatically every night at <strong>2:00 AM</strong>.
+        The last 14 backups are kept on your computer.
+      </p>
+
+      @if (lastBackupPath) {
+        <div class="last-backup">
+          <mat-icon>check_circle</mat-icon>
+          <span>Last backup saved to: <code>{{ lastBackupPath }}</code></span>
+        </div>
+      }
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="backupNow()" [disabled]="backing">
+        @if (backing) {
+          <mat-spinner diameter="18" style="display:inline-block;margin-right:6px"></mat-spinner>
+        } @else {
+          <mat-icon>backup</mat-icon>
+        }
+        {{ backing ? 'Backing up...' : 'Backup Now' }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- Info card -->
+  <mat-card class="info-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>info</mat-icon>
+      <mat-card-title>About Your Data</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="info-rows">
+        <div class="info-row">
+          <mat-icon>folder</mat-icon>
+          <div>
+            <strong>Where is my data?</strong>
+            <p>All data is stored locally on this computer at:<br>
+              <code>{{ status?.dbPath ?? ('{UserFolder}\\HotelManager\\hotel-manager.db') }}</code>
+            </p>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="info-row">
+          <mat-icon>history</mat-icon>
+          <div>
+            <strong>How long can I store data?</strong>
+            <p>SQLite can store years of data with no issues. At typical usage (50 orders/day),
+               the database stays under 50 MB per year. The auto-archive only triggers above 400 MB
+               — roughly 10+ years of data.</p>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="info-row">
+          <mat-icon>archive</mat-icon>
+          <div>
+            <strong>What happens when data is archived?</strong>
+            <p>Your old database is <strong>never deleted</strong>. It gets copied to
+               <code>HotelManager\archives\</code> with a date stamp. The app then starts
+               a fresh database. You can open the archive file any time using
+               <strong>DB Browser for SQLite</strong> (free tool).</p>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+</div>

@@ -83,7 +83,22 @@ export class SettingsService {
       .pipe(map(() => void 0));
   }
 
-  // ── Billing Defaults (stored locally) ────────────────────────────────────
+  // ── Backup ────────────────────────────────────────────────────────────────
+
+  backupNow(): Observable<{ savedTo: string; message: string }> {
+    return this.http.post<ApiResponse<{ savedTo: string; message: string }>>(
+      `${environment.localApiUrl}/backup/now`, {}
+    ).pipe(map(r => r.data));
+  }
+
+  getBackupStatus(): Observable<{
+    level: string; message: string; dbSizeMb: number;
+    warnThresholdMb: number; archiveThresholdMb: number;
+    backupCount: number; backupsTotalMb: number; dbPath: string;
+  }> {
+    return this.http.get<ApiResponse<any>>(`${environment.localApiUrl}/backup/status`)
+      .pipe(map(r => r.data));
+  }
 
   getBillingDefaults(): BillingDefaults {
     const raw = localStorage.getItem(BILLING_DEFAULTS_KEY);

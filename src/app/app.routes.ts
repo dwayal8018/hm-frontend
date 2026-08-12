@@ -102,6 +102,11 @@ export const routes: Routes = [
         path: 'settings/users',
         canActivate: [roleGuard(['OWNER'])],
         loadComponent: () => import('./features/settings/user-management/user-management.component').then(m => m.UserManagementComponent)
+      },
+      {
+        path: 'settings/backup',
+        canActivate: [roleGuard(['OWNER'])],
+        loadComponent: () => import('./features/settings/backup/backup.component').then(m => m.BackupComponent)
       }
     ]
   },
