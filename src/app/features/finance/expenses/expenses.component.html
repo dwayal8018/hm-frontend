@@ -1,0 +1,98 @@
+<div class="sub-page">
+  <div class="page-header">
+    <button mat-icon-button routerLink="/finance" aria-label="Back"><mat-icon>arrow_back</mat-icon></button>
+    <h2>Expenses</h2>
+    <span class="spacer"></span>
+    <span class="month-total">This month: <strong>₹{{ totalThisMonth | number:'1.0-0' }}</strong></span>
+    <button mat-raised-button color="primary" (click)="showForm = !showForm">
+      <mat-icon>{{ showForm ? 'close' : 'add' }}</mat-icon>
+      {{ showForm ? 'Cancel' : 'Add Expense' }}
+    </button>
+  </div>
+
+  @if (loading) { <mat-progress-bar mode="indeterminate"></mat-progress-bar> }
+
+  @if (showForm) {
+    <mat-card class="form-card">
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="save()" class="expense-form">
+          <mat-form-field appearance="outline">
+            <mat-label>Category</mat-label>
+            <mat-select formControlName="categoryId">
+              @for (cat of categories; track cat.id) {
+                <mat-option [value]="cat.id">
+                  <mat-icon>{{ cat.icon }}</mat-icon> {{ cat.name }}
+                </mat-option>
+              }
+            </mat-select>
+            <mat-error>Required</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Amount (₹)</mat-label>
+            <input matInput formControlName="amount" type="number" min="1">
+            <span matTextPrefix>₹&nbsp;</span>
+            <mat-error>Enter a valid amount</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Date</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="expenseDate">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Payment Method</mat-label>
+            <mat-select formControlName="paymentMethod">
+              @for (m of paymentMethods; track m) { <mat-option [value]="m">{{ m }}</mat-option> }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-col">
+            <mat-label>Description (optional)</mat-label>
+            <input matInput formControlName="description" placeholder="e.g. Tomatoes from ABC market">
+          </mat-form-field>
+
+          <div class="form-actions full-col">
+            <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || saving">
+              @if (saving) { <mat-spinner diameter="18" style="display:inline-block;margin-right:6px"></mat-spinner> }
+              Save Expense
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <mat-card class="list-card">
+    <mat-card-content>
+      @if (expenses.length === 0 && !loading) {
+        <div class="empty-state">
+          <mat-icon>receipt_long</mat-icon>
+          <p>No expenses recorded this month.</p>
+        </div>
+      }
+      @for (exp of expenses; track exp.id; let last = $last) {
+        <div class="expense-row">
+          <div class="exp-icon-wrap">
+            <mat-icon>{{ categoryIcon(exp.categoryId) }}</mat-icon>
+          </div>
+          <div class="exp-info">
+            <span class="exp-cat">{{ exp.categoryName }}</span>
+            @if (exp.description) { <span class="exp-desc">{{ exp.description }}</span> }
+          </div>
+          <div class="exp-meta">
+            <span class="exp-date">{{ exp.expenseDate | date:'dd MMM' }}</span>
+            <span class="exp-method">{{ exp.paymentMethod }}</span>
+          </div>
+          <span class="exp-amount">₹{{ exp.amount | number:'1.0-0' }}</span>
+          <button mat-icon-button color="warn" (click)="deleteExpense(exp)" aria-label="Delete">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+        @if (!last) { <mat-divider></mat-divider> }
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

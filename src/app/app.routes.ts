@@ -59,6 +59,26 @@ export const routes: Routes = [
         loadComponent: () => import('./features/reports/reports.component').then(m => m.ReportsComponent)
       },
       {
+        path: 'finance',
+        canActivate: [roleGuard(['OWNER'])],
+        loadComponent: () => import('./features/finance/finance.component').then(m => m.FinanceComponent)
+      },
+      {
+        path: 'finance/expenses',
+        canActivate: [roleGuard(['OWNER'])],
+        loadComponent: () => import('./features/finance/expenses/expenses.component').then(m => m.ExpensesComponent)
+      },
+      {
+        path: 'finance/salaries',
+        canActivate: [roleGuard(['OWNER'])],
+        loadComponent: () => import('./features/finance/salaries/salaries.component').then(m => m.SalariesComponent)
+      },
+      {
+        path: 'finance/withdrawals',
+        canActivate: [roleGuard(['OWNER'])],
+        loadComponent: () => import('./features/finance/withdrawals/withdrawals.component').then(m => m.WithdrawalsComponent)
+      },
+      {
         path: 'settings',
         canActivate: [roleGuard(['OWNER'])],
         loadComponent: () => import('./features/settings/settings.component').then(m => m.SettingsComponent)

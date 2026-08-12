@@ -46,9 +46,9 @@
             </mat-form-field>
           </div>
 
-          <!-- Password in its own row to avoid hint overlap -->
-          <div class="password-row">
-            <mat-form-field appearance="outline" style="width:100%">
+          <!-- Password + Salary on the same row -->
+          <div class="row-2col">
+            <mat-form-field appearance="outline">
               <mat-label>Password</mat-label>
               <input matInput formControlName="password"
                      [type]="hidePassword ? 'password' : 'text'"
@@ -60,6 +60,15 @@
               </button>
               <mat-hint>Min 8 characters</mat-hint>
               <mat-error>Min 8 characters</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Monthly Salary (₹)</mat-label>
+              <input matInput type="number" formControlName="baseSalary"
+                     placeholder="e.g. 15000" min="0">
+              <mat-icon matPrefix>currency_rupee</mat-icon>
+              <mat-hint>Optional — used in Finance → Salaries</mat-hint>
+              <mat-error>Must be 0 or more</mat-error>
             </mat-form-field>
           </div>
 

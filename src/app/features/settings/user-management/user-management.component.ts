@@ -15,6 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { SettingsService, AppUser } from '../../../core/services/settings.service';
+import { FinanceService } from '../../../core/services/finance.service';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -31,6 +32,7 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class UserManagementComponent implements OnInit {
   private settings = inject(SettingsService);
+  private finance  = inject(FinanceService);
   private auth     = inject(AuthService);
   private fb       = inject(FormBuilder);
   private snackBar = inject(MatSnackBar);
@@ -46,15 +48,15 @@ export class UserManagementComponent implements OnInit {
   }
 
   get addableRoles(): string[] {
-    // Can only add roles that are enabled for this restaurant, excluding OWNER
     return this.enabledRoles.filter(r => r !== 'OWNER');
   }
 
   form = this.fb.group({
-    username:  ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-z0-9_]+$/)]],
-    fullName:  ['', Validators.required],
-    role:      ['WAITER', Validators.required],
-    password:  ['', [Validators.required, Validators.minLength(8)]]
+    username:   ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-z0-9_]+$/)]],
+    fullName:   ['', Validators.required],
+    role:       ['WAITER', Validators.required],
+    password:   ['', [Validators.required, Validators.minLength(8)]],
+    baseSalary: [null as number | null, [Validators.min(0)]]
   });
 
   ngOnInit(): void { this.loadUsers(); }
@@ -70,13 +72,38 @@ export class UserManagementComponent implements OnInit {
   addUser(): void {
     if (this.form.invalid) return;
     this.saving = true;
-    this.settings.createUser(this.form.value as any).subscribe({
+    const v = this.form.value;
+
+    this.settings.createUser({
+      username: v.username!, fullName: v.fullName!,
+      role: v.role!, password: v.password!
+    }).subscribe({
       next: (u) => {
-        this.saving = false;
-        this.users.push(u);
-        this.form.reset({ role: this.addableRoles[0] ?? 'WAITER' });
-        this.showAddForm = false;
-        this.snackBar.open(`User "${u.username}" created`, '', { duration: 2500 });
+        const finalize = () => {
+          this.saving = false;
+          this.users.push(u);
+          this.form.reset({ role: this.addableRoles[0] ?? 'WAITER', baseSalary: null });
+          this.showAddForm = false;
+          this.snackBar.open(`User "${u.username}" created`, '', { duration: 2500 });
+        };
+
+        // If salary configured, create salary record in backend-local first
+        if (v.baseSalary && v.baseSalary > 0) {
+          this.finance.upsertEmployee({
+            cloudUserId:  u.id,
+            employeeName: u.fullName,
+            role:         u.role,
+            baseSalary:   v.baseSalary
+          }).subscribe({
+            next:  () => finalize(),
+            error: () => {
+              this.snackBar.open('User created but salary config failed — set it in Finance → Salaries', 'OK', { duration: 5000 });
+              finalize();
+            }
+          });
+        } else {
+          finalize();
+        }
       },
       error: (err) => {
         this.saving = false;

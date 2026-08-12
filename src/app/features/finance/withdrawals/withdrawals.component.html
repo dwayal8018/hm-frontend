@@ -1,0 +1,39 @@
+<div class="sub-page">
+  <div class="page-header">
+    <button mat-icon-button routerLink="/finance"><mat-icon>arrow_back</mat-icon></button>
+    <h2>My Withdrawals</h2>
+    <span class="spacer"></span>
+    <span class="total">This month: <strong>₹{{ total | number:'1.0-0' }}</strong></span>
+    <button mat-raised-button color="primary" (click)="showForm=!showForm">
+      <mat-icon>{{ showForm ? 'close' : 'add' }}</mat-icon> {{ showForm ? 'Cancel' : 'Record' }}
+    </button>
+  </div>
+  @if (loading) { <mat-progress-bar mode="indeterminate"></mat-progress-bar> }
+  @if (showForm) {
+    <mat-card class="form-card">
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="save()" class="w-form">
+          <mat-form-field appearance="outline"><mat-label>Amount (₹)</mat-label><input matInput formControlName="amount" type="number"><span matTextPrefix>₹&nbsp;</span><mat-error>Required</mat-error></mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>Date</mat-label><input matInput [matDatepicker]="p" formControlName="withdrawalDate"><mat-datepicker-toggle matIconSuffix [for]="p"></mat-datepicker-toggle><mat-datepicker #p></mat-datepicker></mat-form-field>
+          <mat-form-field appearance="outline"><mat-label>Method</mat-label><mat-select formControlName="paymentMethod">@for(m of methods;track m){<mat-option [value]="m">{{m}}</mat-option>}</mat-select></mat-form-field>
+          <mat-form-field appearance="outline" class="fc"><mat-label>Reason (optional)</mat-label><input matInput formControlName="reason"></mat-form-field>
+          <div class="fa fc"><button mat-raised-button color="primary" type="submit" [disabled]="form.invalid||saving">@if(saving){<mat-spinner diameter="18" style="display:inline-block;margin-right:6px"></mat-spinner>}Save</button></div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+  <mat-card>
+    <mat-card-content>
+      @if (list.length === 0 && !loading) { <div class="empty"><mat-icon>account_balance</mat-icon><p>No withdrawals this month.</p></div> }
+      @for (w of list; track w.id; let last=$last) {
+        <div class="w-row">
+          <mat-icon class="wi">account_balance</mat-icon>
+          <div class="wi-info"><span class="wr">{{ w.reason || 'Personal withdrawal' }}</span><span class="wm">{{ w.withdrawalDate | date:'dd MMM' }} · {{ w.paymentMethod }}</span></div>
+          <span class="wa">₹{{ w.amount | number:'1.0-0' }}</span>
+          <button mat-icon-button color="warn" (click)="del(w)"><mat-icon>delete</mat-icon></button>
+        </div>
+        @if (!last) { <mat-divider></mat-divider> }
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

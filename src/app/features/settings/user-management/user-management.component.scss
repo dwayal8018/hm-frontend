@@ -18,14 +18,10 @@
 }
 .row-2col {
   display: flex; gap: 12px;
-  mat-form-field { flex: 1; max-width: 300px; }
+  mat-form-field { flex: 1; }
+  @media (max-width: 600px) { flex-direction: column; }
 }
 .form-actions { display: flex; justify-content: flex-end; margin-top: 8px; }
-
-/* Fix: password field in its own row so hint doesn't overlap username hint */
-.password-row {
-  max-width: 300px;
-}
 
 .user-row {
   display: flex; align-items: center; gap: 12px; padding: 12px 4px;

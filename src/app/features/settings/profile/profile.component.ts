@@ -150,7 +150,12 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         this.saving = false;
-        this.snackBar.open(err.error?.message ?? 'Failed to update', 'Close', { duration: 4000 });
+        // err.error is the ApiResponse wrapper: { success: false, message: "..." }
+        const msg = err.error?.message
+          ?? (err.status === 409 ? 'This email is already used by another restaurant.' : null)
+          ?? (err.status === 0   ? 'Cannot connect to server. Please check your connection.' : null)
+          ?? 'Failed to save profile. Please try again.';
+        this.snackBar.open(msg, 'Close', { duration: 5000 });
       }
     });
   }

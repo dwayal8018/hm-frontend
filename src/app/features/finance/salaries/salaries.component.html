@@ -1,0 +1,59 @@
+<div class="sub-page">
+  <div class="page-header">
+    <button mat-icon-button routerLink="/finance"><mat-icon>arrow_back</mat-icon></button>
+    <h2>Salaries</h2>
+    @if (unpaid > 0) { <span class="badge">{{ unpaid }} pending</span> }
+  </div>
+  @if (loading) { <mat-progress-bar mode="indeterminate"></mat-progress-bar> }
+  <div class="layout">
+    <mat-card class="list-card">
+      <mat-card-content>
+        @if (employees.length === 0 && !loading) {
+          <div class="empty"><mat-icon>people</mat-icon><p>No employees. Add staff in User Management first.</p></div>
+        }
+        @for (e of employees; track e.id; let last = $last) {
+          <div class="emp-row" [class.sel]="selected?.id===e.id" (click)="select(e)">
+            <div class="avatar">{{ e.employeeName.charAt(0) }}</div>
+            <div class="info"><span class="name">{{ e.employeeName }}</span><span class="role">{{ e.role }}</span></div>
+            <span class="base">₹{{ e.baseSalary | number:'1.0-0' }}</span>
+            <mat-icon [class]="e.paidThisMonth ? 'paid' : 'unpaid'">{{ e.paidThisMonth ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+          </div>
+          @if (!last) { <mat-divider></mat-divider> }
+        }
+      </mat-card-content>
+    </mat-card>
+    @if (selected) {
+      <mat-card class="detail-card">
+        <mat-card-header>
+          <mat-card-title>{{ selected.employeeName }}</mat-card-title>
+          <mat-card-subtitle>{{ selected.role }} — ₹{{ selected.baseSalary | number:'1.0-0' }}/month</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          @if (!selected.paidThisMonth) {
+            <button mat-raised-button color="primary" (click)="showPay=!showPay" style="margin-bottom:12px">
+              <mat-icon>payments</mat-icon> {{ showPay ? 'Cancel' : 'Pay Salary' }}
+            </button>
+          } @else {
+            <div class="paid-banner"><mat-icon>check_circle</mat-icon> Paid ₹{{ selected.paidThisMonthAmount | number:'1.0-0' }} this month</div>
+          }
+          @if (showPay) {
+            <form [formGroup]="payForm" (ngSubmit)="pay()" class="pay-form">
+              <mat-form-field appearance="outline" class="fw"><mat-label>Amount</mat-label><input matInput formControlName="paidAmount" type="number"><span matTextPrefix>₹&nbsp;</span></mat-form-field>
+              <mat-form-field appearance="outline" class="fw"><mat-label>Month (YYYY-MM)</mat-label><input matInput formControlName="paymentMonth"></mat-form-field>
+              <mat-form-field appearance="outline" class="fw"><mat-label>Method</mat-label><mat-select formControlName="paymentMethod">@for (m of methods; track m){ <mat-option [value]="m">{{ m }}</mat-option> }</mat-select></mat-form-field>
+              <mat-form-field appearance="outline" class="fw"><mat-label>Notes</mat-label><input matInput formControlName="notes"></mat-form-field>
+              <button mat-raised-button color="primary" type="submit" [disabled]="payForm.invalid||saving" class="fw">
+                @if(saving){<mat-spinner diameter="18" style="display:inline-block;margin-right:6px"></mat-spinner>}Confirm
+              </button>
+            </form>
+          }
+          <div class="hist-label">Payment History</div>
+          @for (p of history; track p.id) {
+            <div class="hist-row"><span class="hm">{{ p.paymentMonth }}</span><span class="ha">₹{{ p.paidAmount | number:'1.0-0' }}</span><span class="hd">{{ p.paidAt | date:'dd MMM' }}</span></div>
+          }
+          @if (history.length === 0) { <p class="no-hist">No payments yet</p> }
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+</div>

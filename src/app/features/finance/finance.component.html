@@ -1,0 +1,116 @@
+<div class="finance-page">
+
+  <!-- ── Header row ───────────────────────────────────────────────────────── -->
+  <div class="page-header">
+    <div class="page-title">
+      <mat-icon class="title-icon">account_balance_wallet</mat-icon>
+      <div>
+        <h2>Finance</h2>
+        <p class="title-sub">Track revenue, expenses & profitability</p>
+      </div>
+    </div>
+    <mat-select [(ngModel)]="period" (ngModelChange)="loadSummary()" class="period-select">
+      @for (p of periods; track p.value) {
+        <mat-option [value]="p.value">{{ p.label }}</mat-option>
+      }
+    </mat-select>
+  </div>
+
+  @if (loading) { <mat-progress-bar mode="indeterminate"></mat-progress-bar> }
+
+  <!-- ── Quick navigation buttons ─────────────────────────────────────────── -->
+  <div class="quick-nav">
+    <a class="nav-btn expenses" routerLink="/finance/expenses">
+      <div class="nav-btn-icon"><mat-icon>add_shopping_cart</mat-icon></div>
+      <div class="nav-btn-text">
+        <span class="nav-btn-label">Expenses</span>
+        <span class="nav-btn-hint">Record & track spending</span>
+      </div>
+      <mat-icon class="nav-btn-arrow">chevron_right</mat-icon>
+    </a>
+    <a class="nav-btn salaries" routerLink="/finance/salaries">
+      <div class="nav-btn-icon"><mat-icon>payments</mat-icon></div>
+      <div class="nav-btn-text">
+        <span class="nav-btn-label">Salaries</span>
+        <span class="nav-btn-hint">Pay & manage staff</span>
+      </div>
+      <mat-icon class="nav-btn-arrow">chevron_right</mat-icon>
+    </a>
+    <a class="nav-btn withdrawals" routerLink="/finance/withdrawals">
+      <div class="nav-btn-icon"><mat-icon>account_balance</mat-icon></div>
+      <div class="nav-btn-text">
+        <span class="nav-btn-label">Withdrawals</span>
+        <span class="nav-btn-hint">Personal withdrawals</span>
+      </div>
+      <mat-icon class="nav-btn-arrow">chevron_right</mat-icon>
+    </a>
+  </div>
+
+  @if (summary) {
+    <!-- ── KPI cards ─────────────────────────────────────────────────────── -->
+    <div class="kpi-grid">
+      <mat-card class="kpi-card revenue">
+        <mat-card-content>
+          <mat-icon>trending_up</mat-icon>
+          <div class="kpi-value">₹{{ summary.totalRevenue | number:'1.0-0' }}</div>
+          <div class="kpi-label">Revenue</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="kpi-card expense">
+        <mat-card-content>
+          <mat-icon>shopping_cart</mat-icon>
+          <div class="kpi-value">₹{{ summary.totalExpenses | number:'1.0-0' }}</div>
+          <div class="kpi-label">Expenses</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="kpi-card salary">
+        <mat-card-content>
+          <mat-icon>people</mat-icon>
+          <div class="kpi-value">₹{{ summary.totalSalaries | number:'1.0-0' }}</div>
+          <div class="kpi-label">Salaries</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="kpi-card withdrawal">
+        <mat-card-content>
+          <mat-icon>account_balance</mat-icon>
+          <div class="kpi-value">₹{{ summary.totalWithdrawals | number:'1.0-0' }}</div>
+          <div class="kpi-label">Withdrawals</div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="kpi-card profit" [style.borderTopColor]="profitColor()">
+        <mat-card-content>
+          <mat-icon [style.color]="profitColor()">
+            {{ summary.netProfit >= 0 ? 'trending_up' : 'trending_down' }}
+          </mat-icon>
+          <div class="kpi-value" [style.color]="profitColor()">
+            ₹{{ summary.netProfit | number:'1.0-0' }}
+          </div>
+          <div class="kpi-label">Net Profit</div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- ── Expense breakdown ─────────────────────────────────────────────── -->
+    @if (summary.expenseByCategory.length > 0) {
+      <mat-card class="breakdown-card">
+        <mat-card-header><mat-card-title>Expense Breakdown</mat-card-title></mat-card-header>
+        <mat-card-content>
+          @for (cat of summary.expenseByCategory; track cat.category) {
+            <div class="breakdown-row">
+              <span class="cat-name">{{ cat.category }}</span>
+              <div class="cat-bar-wrap">
+                <div class="cat-bar" [style.width.%]="(cat.amount / summary.totalExpenses) * 100"></div>
+              </div>
+              <span class="cat-amount">₹{{ cat.amount | number:'1.0-0' }}</span>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+
+</div>

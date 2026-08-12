@@ -41,8 +41,9 @@ export class ShellComponent {
     { label: 'Kitchen',   icon: 'restaurant',       route: '/kitchen',   roles: ['CHEF', 'OWNER', 'MANAGER'] },
     { label: 'Menu',      icon: 'restaurant_menu',  route: '/menu',      roles: ['OWNER', 'MANAGER'] },
     { label: 'Billing',   icon: 'receipt_long',     route: '/billing',   roles: ['OWNER', 'MANAGER'] },
-    { label: 'Reports',   icon: 'bar_chart',        route: '/reports',   roles: ['OWNER', 'MANAGER'] },
-    { label: 'Settings',  icon: 'settings',         route: '/settings',  roles: ['OWNER'] }
+    { label: 'Reports',   icon: 'bar_chart',              route: '/reports',   roles: ['OWNER', 'MANAGER'] },
+    { label: 'Finance',   icon: 'account_balance_wallet', route: '/finance',   roles: ['OWNER'] },
+    { label: 'Settings',  icon: 'settings',               route: '/settings',  roles: ['OWNER'] }
   ];
 
   get visibleNavItems(): NavItem[] {

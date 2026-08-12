@@ -207,19 +207,24 @@
 
                 <mat-divider class="divider"></mat-divider>
 
-                <!-- Payment details (optional) -->
-                <div class="row-2col">
-                  <mat-form-field appearance="outline" class="half-width">
-                    <mat-label>Amount Paid <span class="optional">(optional)</span></mat-label>
-                    <input matInput formControlName="amountPaid" type="number" placeholder="0.00" min="0">
-                    <span matTextPrefix>₹&nbsp;</span>
-                  </mat-form-field>
-
-                  <mat-form-field appearance="outline" class="half-width">
-                    <mat-label>Payment Ref <span class="optional">(optional)</span></mat-label>
-                    <input matInput formControlName="paymentRef" placeholder="UPI/cheque ref">
-                    <mat-icon matSuffix>receipt</mat-icon>
-                  </mat-form-field>
+                <!-- Dynamic QR payment -->
+                <div class="payment-section">
+                  <p class="section-label">Pay via UPI to Activate</p>
+                  <div class="qr-payment-box">
+                    <div class="qr-left">
+                      @if (qrDataUrl()) {
+                        <img [src]="qrDataUrl()" alt="UPI QR Code" class="qr-img">
+                      } @else {
+                        <div class="qr-placeholder"><mat-icon>qr_code_2</mat-icon></div>
+                      }
+                    </div>
+                    <div class="qr-right">
+                      <p class="qr-plan-label">{{ selectedPlan?.label }} Plan</p>
+                      <p class="qr-amount">₹{{ selectedPlan?.price | number:'1.0-0' }}</p>
+                      <p class="qr-upi">{{ '7391818018@yescred' }}</p>
+                      <p class="qr-note">Scan the QR or use the UPI ID above. Amount changes automatically when you select a different plan.</p>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="step-actions">
