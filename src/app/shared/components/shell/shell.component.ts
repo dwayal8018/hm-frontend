@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../../core/services/auth.service';
+import { SettingsService } from '../../../core/services/settings.service';
 
 interface NavItem { label: string; icon: string; route: string; roles: string[]; }
 
@@ -23,8 +24,13 @@ interface NavItem { label: string; icon: string; route: string; roles: string[];
   templateUrl: './shell.component.html',
   styleUrl: './shell.component.scss'
 })
-export class ShellComponent {
-  auth = inject(AuthService);
+export class ShellComponent implements OnInit {
+  auth     = inject(AuthService);
+  private settings = inject(SettingsService);
+
+  dbWarningLevel: 'OK' | 'WARNING' | 'CRITICAL' = 'OK';
+  dbWarningMessage = '';
+  dbSizeMb = 0;
 
   // CHEF/WAITER: sidebar starts collapsed; Owner/Manager: starts open
   sidenavOpen = signal(!['WAITER', 'CHEF'].includes(this.auth.user()?.role ?? ''));
@@ -55,6 +61,22 @@ export class ShellComponent {
   get userRole():       string { return this.auth.user()?.role ?? ''; }
   get subscriptionStatus()     { return this.auth.subscription()?.status; }
   get daysRemaining(): number  { return this.auth.subscription()?.daysRemaining ?? 0; }
+
+  ngOnInit(): void {
+    // Only poll for OWNER — they're the only one who can act on storage warnings
+    if (this.auth.hasRole('OWNER')) {
+      this.settings.getBackupStatus().subscribe({
+        next: s => {
+          this.dbWarningLevel   = s.level as 'OK' | 'WARNING' | 'CRITICAL';
+          this.dbWarningMessage = s.message;
+          this.dbSizeMb         = s.dbSizeMb;
+        },
+        error: () => { /* backend not reachable — silently ignore */ }
+      });
+    }
+  }
+
+  dismissDbWarning(): void { this.dbWarningLevel = 'OK'; }
 
   toggleSidenav(): void { this.sidenavOpen.update(v => !v); }
   logout(): void        { this.auth.logout(); }

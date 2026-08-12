@@ -114,6 +114,46 @@
   }
 }
 
+// ── DB storage warning banner ─────────────────────────────────────────────────
+.db-warning-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background-color: #fff8e1;
+  border-left: 4px solid #ff9800;
+  border-bottom: 1px solid #ffe082;
+  font-size: 13px;
+  color: #e65100;
+  margin-bottom: 0;
+
+  mat-icon { color: #ff9800; flex-shrink: 0; }
+
+  span { flex: 1; line-height: 1.4; }
+
+  &.critical {
+    background-color: #fce4ec;
+    border-left-color: #f44336;
+    color: #b71c1c;
+    mat-icon { color: #f44336; }
+    .banner-link { color: #c62828; }
+  }
+
+  .banner-link {
+    color: #e65100;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    &:hover { text-decoration: underline; }
+  }
+
+  .banner-dismiss {
+    width: 28px; height: 28px;
+    flex-shrink: 0;
+    mat-icon { font-size: 18px; width: 18px; height: 18px; color: inherit; }
+  }
+}
+
 // ── Content area ──────────────────────────────────────────────────────────────
 .shell-content {
   display: flex;

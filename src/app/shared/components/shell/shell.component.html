@@ -55,6 +55,22 @@
     </mat-toolbar>
 
     <div class="page-content">
+      <!-- DB storage warning banner — only shows at WARNING or CRITICAL level -->
+      @if (dbWarningLevel === 'WARNING' || dbWarningLevel === 'CRITICAL') {
+        <div class="db-warning-banner" [class.critical]="dbWarningLevel === 'CRITICAL'">
+          <mat-icon>{{ dbWarningLevel === 'CRITICAL' ? 'error' : 'warning' }}</mat-icon>
+          <span>
+            <strong>Storage {{ dbWarningLevel === 'CRITICAL' ? 'Critical' : 'Warning' }}:</strong>
+            {{ dbWarningMessage }}
+            ({{ dbSizeMb }} MB used)
+          </span>
+          <a routerLink="/settings/backup" class="banner-link">View Backups</a>
+          <button mat-icon-button class="banner-dismiss" (click)="dismissDbWarning()"
+                  aria-label="Dismiss storage warning">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      }
       <router-outlet />
     </div>
 
