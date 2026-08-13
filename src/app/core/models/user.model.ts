@@ -55,7 +55,7 @@ export interface RegisterRestaurantRequest {
   enabledRoles: string[];
   planType: PlanType;
   amountPaid?: number;
-  paymentRef?: string;
+  paymentRef: string;  // UPI UTR / transaction ID — required
 }
 
 export interface RegisterRestaurantResponse {

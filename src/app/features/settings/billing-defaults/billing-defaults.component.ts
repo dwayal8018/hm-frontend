@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { SettingsService } from '../../../core/services/settings.service';
 
@@ -19,7 +20,7 @@ import { SettingsService } from '../../../core/services/settings.service';
     CommonModule, ReactiveFormsModule, RouterLink,
     MatCardModule, MatFormFieldModule, MatInputModule,
     MatButtonModule, MatIconModule, MatRadioModule, MatSnackBarModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule, MatProgressBarModule
   ],
   templateUrl: './billing-defaults.component.html',
   styleUrl:    './billing-defaults.component.scss'
@@ -29,6 +30,9 @@ export class BillingDefaultsComponent implements OnInit {
   private fb       = inject(FormBuilder);
   private snackBar = inject(MatSnackBar);
 
+  loading = true;
+  saving  = false;
+
   form = this.fb.group({
     defaultTaxPercent:    [0, [Validators.min(0), Validators.max(100)]],
     defaultDiscountType:  ['percent'],
@@ -36,13 +40,19 @@ export class BillingDefaultsComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    const defaults = this.settings.getBillingDefaults();
-    this.form.patchValue(defaults);
+    this.settings.getBillingDefaults().subscribe({
+      next: defaults => { this.form.patchValue(defaults); this.loading = false; },
+      // Fallback to localStorage if backend not reachable (offline)
+      error: () => { this.form.patchValue(this.settings.getBillingDefaultsSync()); this.loading = false; }
+    });
   }
 
   save(): void {
     if (this.form.invalid) return;
-    this.settings.saveBillingDefaults(this.form.value as any);
-    this.snackBar.open('Billing defaults saved', '', { duration: 2000 });
+    this.saving = true;
+    this.settings.saveBillingDefaults(this.form.value as any).subscribe({
+      next: () => { this.saving = false; this.snackBar.open('Billing defaults saved', '', { duration: 2000 }); },
+      error: () => { this.saving = false; this.snackBar.open('Failed to save — check backend connection', 'Close', { duration: 3000 }); }
+    });
   }
 }

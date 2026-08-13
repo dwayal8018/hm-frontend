@@ -38,10 +38,12 @@ export class UserManagementComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
 
   users:       AppUser[] = [];
+  employeeIds: Set<number> = new Set(); // cloudUserIds already in employee_salary
   loading      = true;
   saving       = false;
   showAddForm  = false;
   hidePassword = true;
+  addingSalaryFor: number | null = null; // userId currently showing inline salary form
 
   get enabledRoles(): string[] {
     return this.auth.restaurant()?.enabledRoles ?? ['OWNER', 'WAITER'];
@@ -63,9 +65,49 @@ export class UserManagementComponent implements OnInit {
 
   loadUsers(): void {
     this.loading = true;
+    // Load users and existing employee records in parallel
     this.settings.listUsers().subscribe({
-      next:  (u) => { this.users = u; this.loading = false; },
-      error: ()  => { this.loading = false; }
+      next: (u) => {
+        this.users = u;
+        this.loading = false;
+        // Load salary records to know which users already have one
+        this.finance.getEmployees().subscribe({
+          next: employees => { this.employeeIds = new Set(employees.map(e => e.cloudUserId)); },
+          error: () => {} // local backend might be offline — silently ignore
+        });
+      },
+      error: () => { this.loading = false; }
+    });
+  }
+
+  hasEmployeeRecord(user: AppUser): boolean {
+    return this.employeeIds.has(user.id);
+  }
+
+  salaryForm = this.fb.group({
+    baseSalary: [null as number | null, [Validators.required, Validators.min(1)]]
+  });
+
+  showAddSalaryForm(userId: number): void {
+    this.addingSalaryFor = userId;
+    this.salaryForm.reset();
+  }
+
+  addToSalaries(user: AppUser): void {
+    if (this.salaryForm.invalid) return;
+    const salary = this.salaryForm.value.baseSalary!;
+    this.finance.upsertEmployee({
+      cloudUserId:  user.id,
+      employeeName: user.fullName,
+      role:         user.role,
+      baseSalary:   salary
+    }).subscribe({
+      next: () => {
+        this.employeeIds = new Set([...this.employeeIds, user.id]);
+        this.addingSalaryFor = null;
+        this.snackBar.open(`${user.fullName} added to Salaries (₹${salary}/mo)`, '', { duration: 3000 });
+      },
+      error: err => this.snackBar.open(err.error?.message ?? 'Failed to add salary record', 'Close', { duration: 4000 })
     });
   }
 

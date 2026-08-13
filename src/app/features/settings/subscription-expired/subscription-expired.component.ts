@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -14,15 +14,12 @@ import { AuthService } from '../../../core/services/auth.service';
   styleUrl: './subscription-expired.component.scss'
 })
 export class SubscriptionExpiredComponent {
-  private auth = inject(AuthService);
+  private auth   = inject(AuthService);
+  private router = inject(Router);
 
   get expiryDate(): string { return this.auth.subscription()?.expiryDate ?? 'N/A'; }
   get planType():   string { return this.auth.subscription()?.planType   ?? ''; }
 
-  renewNow(): void {
-    // Will open the renewal URL/payment flow in Phase 2
-    alert('Renewal flow coming soon. Please contact your administrator.');
-  }
-
-  logout(): void { this.auth.logout(); }
+  renewNow(): void { this.router.navigate(['/subscription/renew']); }
+  logout():   void { this.auth.logout(); }
 }

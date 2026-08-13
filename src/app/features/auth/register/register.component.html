@@ -221,10 +221,22 @@
                     <div class="qr-right">
                       <p class="qr-plan-label">{{ selectedPlan?.label }} Plan</p>
                       <p class="qr-amount">₹{{ selectedPlan?.price | number:'1.0-0' }}</p>
-                      <p class="qr-upi">{{ '7391818018@yescred' }}</p>
+                      <p class="qr-upi">{{ UPI_ID }}</p>
                       <p class="qr-note">Scan the QR or use the UPI ID above. Amount changes automatically when you select a different plan.</p>
                     </div>
                   </div>
+
+                  <!-- Payment reference — required to prevent free registrations -->
+                  <mat-form-field appearance="outline" class="full-width" style="margin-top:12px">
+                    <mat-label>UPI Transaction ID / Payment Reference</mat-label>
+                    <input matInput formControlName="paymentRef"
+                           placeholder="e.g. 316122543498"
+                           autocomplete="off">
+                    <mat-icon matSuffix>receipt</mat-icon>
+                    <mat-hint>Enter the UTR / transaction ID from your UPI payment confirmation</mat-hint>
+                    <mat-error *ngIf="planForm.get('paymentRef')?.hasError('required')">Transaction ID is required</mat-error>
+                    <mat-error *ngIf="planForm.get('paymentRef')?.hasError('minlength')">Minimum 6 characters</mat-error>
+                  </mat-form-field>
                 </div>
 
                 <div class="step-actions">

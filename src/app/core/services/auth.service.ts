@@ -115,6 +115,19 @@ export class AuthService {
     );
   }
 
+  renewSubscription(planType: string, paymentRef: string, amountPaid: number): Observable<SubscriptionInfo> {
+    return this.http.post<{ success: boolean; data: SubscriptionInfo }>(
+      `${environment.cloudApiUrl}/subscription/renew`,
+      { planType, paymentRef, amountPaid }
+    ).pipe(
+      map(r => r.data),
+      tap(sub => {
+        this.subscriptionInfo.set(sub);
+        localStorage.setItem(SUB_KEY, JSON.stringify(sub));
+      })
+    );
+  }
+
   private handleAuthSuccess(response: AuthResponse): void {
     localStorage.setItem(TOKEN_KEY, response.token);
     localStorage.setItem(USER_KEY,  JSON.stringify(response.user));

@@ -46,8 +46,12 @@ export class LoginComponent {
     const { restaurantCode, username, password } = this.form.value;
     this.auth.login({ restaurantCode: restaurantCode!, username: username!, password: password! }).subscribe({
       next: () => {
+        // Always refresh subscription from cloud on login — catches any expiry since last session.
+        // We navigate immediately and let the refresh happen in background;
+        // if the subscription is expired the guard will block on the next navigation.
+        this.auth.refreshSubscription().subscribe({ error: () => {} });
+
         this.loading.set(false);
-        // Waiters go straight to tables — they have no dashboard access
         const role       = this.auth.user()?.role;
         const defaultUrl = role === 'WAITER' ? '/tables'
                          : role === 'CHEF'   ? '/kitchen'

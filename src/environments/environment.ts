@@ -1,6 +1,9 @@
 export const environment = {
   production: false,
   localApiUrl: 'http://localhost:8080/api',
-  cloudApiUrl: 'http://localhost:8081/api', //your-cloud-server
-  subscriptionCheckInterval: 3600000
+  cloudApiUrl: 'http://localhost:8081/api',
+  subscriptionCheckInterval: 3600000,
+  // Payment UPI config — update before deploying to a new installation
+  upiId:   '7391818018@yescred',
+  upiName: 'Hotel Manager'
 };

@@ -110,6 +110,36 @@
           }
           <div class="user-actions">
             @if (user.role !== 'OWNER') {
+              <!-- Add to Salaries if not already configured -->
+              @if (!hasEmployeeRecord(user)) {
+                @if (addingSalaryFor === user.id) {
+                  <form [formGroup]="salaryForm" (ngSubmit)="addToSalaries(user)" class="inline-salary-form">
+                    <mat-form-field appearance="outline" style="width:130px">
+                      <mat-label>Salary ₹/mo</mat-label>
+                      <input matInput type="number" formControlName="baseSalary" min="1">
+                    </mat-form-field>
+                    <button mat-icon-button color="primary" type="submit"
+                            [disabled]="salaryForm.invalid"
+                            matTooltip="Confirm salary">
+                      <mat-icon>check</mat-icon>
+                    </button>
+                    <button mat-icon-button type="button"
+                            (click)="addingSalaryFor = null"
+                            matTooltip="Cancel">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </form>
+                } @else {
+                  <button mat-icon-button
+                          matTooltip="Add to Salaries"
+                          (click)="showAddSalaryForm(user.id)"
+                          aria-label="Add to salaries">
+                    <mat-icon>payments</mat-icon>
+                  </button>
+                }
+              } @else {
+                <mat-icon class="salary-set-icon" matTooltip="Salary configured">payments</mat-icon>
+              }
               <button mat-icon-button
                       [matTooltip]="user.active ? 'Deactivate' : 'Activate'"
                       (click)="toggleUser(user)"

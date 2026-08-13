@@ -35,7 +35,7 @@ export interface CreateUserRequest {
 
 export interface BillingDefaults {
   defaultTaxPercent: number;
-  defaultDiscountType: 'percent' | 'amount';
+  defaultDiscountType: 'percent' | 'amount' | 'none';
   defaultDiscountValue: number;
 }
 
@@ -100,13 +100,27 @@ export class SettingsService {
       .pipe(map(r => r.data));
   }
 
-  getBillingDefaults(): BillingDefaults {
+  // ── Billing Defaults (persisted to local backend) ────────────────────────
+
+  getBillingDefaults(): Observable<BillingDefaults> {
+    // Try backend first; fall back to localStorage for offline resilience
+    return this.http.get<ApiResponse<BillingDefaults>>(`${environment.localApiUrl}/settings/billing-defaults`)
+      .pipe(
+        map(r => { localStorage.setItem(BILLING_DEFAULTS_KEY, JSON.stringify(r.data)); return r.data; })
+      );
+  }
+
+  saveBillingDefaults(defaults: BillingDefaults): Observable<BillingDefaults> {
+    return this.http.put<ApiResponse<BillingDefaults>>(`${environment.localApiUrl}/settings/billing-defaults`, defaults)
+      .pipe(
+        map(r => { localStorage.setItem(BILLING_DEFAULTS_KEY, JSON.stringify(r.data)); return r.data; })
+      );
+  }
+
+  /** Synchronous fallback read from localStorage (used by billing dialog when offline) */
+  getBillingDefaultsSync(): BillingDefaults {
     const raw = localStorage.getItem(BILLING_DEFAULTS_KEY);
     if (raw) return JSON.parse(raw);
     return { defaultTaxPercent: 0, defaultDiscountType: 'percent', defaultDiscountValue: 0 };
-  }
-
-  saveBillingDefaults(defaults: BillingDefaults): void {
-    localStorage.setItem(BILLING_DEFAULTS_KEY, JSON.stringify(defaults));
   }
 }

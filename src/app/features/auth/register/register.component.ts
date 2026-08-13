@@ -15,7 +15,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatDividerModule } from '@angular/material/divider';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { QrService } from '../../../core/services/qr.service';
+import { environment } from '../../../../environments/environment';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const QRCode = require('qrcode');
@@ -44,9 +44,9 @@ export class RegisterComponent implements OnInit {
   restaurantCode   = signal<string | null>(null);
   qrDataUrl        = signal<string>('');
 
-  // Your UPI ID — fixed
-  private readonly UPI_ID    = '7391818018@yescred';
-  private readonly UPI_NAME  = 'Hotel Manager';
+  // UPI config — driven from environment so no code change needed to update payment details
+  readonly UPI_ID   = environment.upiId;
+  readonly UPI_NAME = environment.upiName;
 
   togglePassword(): void { this.hidePassword.set(!this.hidePassword()); }
   toggleConfirm():  void { this.hideConfirm.set(!this.hideConfirm()); }
@@ -67,8 +67,9 @@ export class RegisterComponent implements OnInit {
   }, { validators: this.passwordMatchValidator });
 
   planForm = this.fb.group({
-    planType: ['YEARLY', Validators.required],
-    roles:    [['OWNER', 'WAITER'], Validators.required]
+    planType:   ['YEARLY', Validators.required],
+    roles:      [['OWNER', 'WAITER'], Validators.required],
+    paymentRef: ['', [Validators.required, Validators.minLength(6)]]
   });
 
   readonly plans = [
@@ -133,6 +134,8 @@ export class RegisterComponent implements OnInit {
       ownerPassword:  o.ownerPassword!,
       planType:       p.planType as 'MONTHLY_3' | 'MONTHLY_6' | 'YEARLY',
       enabledRoles:   p.roles as string[],
+      paymentRef:     p.paymentRef!,
+      amountPaid:     this.selectedPlan?.price
     }).subscribe({
       next: (res) => { this.loading.set(false); this.restaurantCode.set(res.data); },
       error: (err) => {

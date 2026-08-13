@@ -1,0 +1,88 @@
+<div class="renew-page">
+  <mat-card class="renew-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar class="header-icon">card_membership</mat-icon>
+      <mat-card-title>Renew Subscription</mat-card-title>
+      <mat-card-subtitle>
+        Current plan: {{ currentPlan }} &nbsp;·&nbsp;
+        @if (daysRemaining > 0) { Expires in {{ daysRemaining }} days }
+        @else { Expired on {{ expiryDate | date:'dd MMM yyyy' }} }
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="submit()">
+
+        <!-- Plan selection -->
+        <p class="section-label">Select Plan</p>
+        <div class="plan-grid">
+          @for (plan of plans; track plan.value) {
+            <div class="plan-card"
+                 [class.selected]="form.value.planType === plan.value"
+                 (click)="form.patchValue({ planType: plan.value })"
+                 role="radio"
+                 [attr.aria-checked]="form.value.planType === plan.value"
+                 tabindex="0"
+                 (keydown.enter)="form.patchValue({ planType: plan.value })"
+                 (keydown.space)="form.patchValue({ planType: plan.value })">
+              <mat-icon>calendar_month</mat-icon>
+              <span class="plan-label">{{ plan.label }}</span>
+              <span class="plan-price">₹{{ plan.price | number:'1.0-0' }}</span>
+            </div>
+          }
+        </div>
+
+        <mat-divider class="divider"></mat-divider>
+
+        <!-- QR payment -->
+        <p class="section-label">Pay via UPI</p>
+        <div class="qr-box">
+          <div class="qr-left">
+            @if (qrDataUrl()) {
+              <img [src]="qrDataUrl()" alt="UPI QR" class="qr-img">
+            } @else {
+              <div class="qr-placeholder"><mat-icon>qr_code_2</mat-icon></div>
+            }
+          </div>
+          <div class="qr-right">
+            <p class="amount">₹{{ selectedPlan?.price | number:'1.0-0' }}</p>
+            <p class="upi-id">{{ selectedPlan?.label }} Plan</p>
+            <p class="upi-id">UPI: <strong>{{ upiId }}</strong></p>
+            <p class="note">After payment, enter the UTR/transaction ID below.</p>
+          </div>
+        </div>
+
+        <mat-divider class="divider"></mat-divider>
+
+        <!-- Payment reference -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>UPI Transaction ID (UTR)</mat-label>
+          <input matInput formControlName="paymentRef"
+                 placeholder="e.g. 316122543498"
+                 autocomplete="off">
+          <mat-icon matSuffix>receipt_long</mat-icon>
+          <mat-hint>Find this in your UPI app under payment history</mat-hint>
+          <mat-error *ngIf="form.get('paymentRef')?.hasError('required')">Transaction ID is required</mat-error>
+          <mat-error *ngIf="form.get('paymentRef')?.hasError('minlength')">Minimum 6 characters</mat-error>
+        </mat-form-field>
+
+        <div class="actions">
+          <button mat-raised-button color="primary" type="submit"
+                  [disabled]="form.invalid || loading()">
+            @if (loading()) {
+              <mat-spinner diameter="18" style="display:inline-block;margin-right:6px"></mat-spinner>
+              Processing...
+            } @else {
+              <mat-icon>check_circle</mat-icon>
+              Confirm Renewal
+            }
+          </button>
+          <button mat-stroked-button type="button" (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon> Back
+          </button>
+        </div>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
