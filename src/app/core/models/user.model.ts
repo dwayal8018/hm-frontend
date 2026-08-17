@@ -45,6 +45,7 @@ export type PlanType = 'MONTHLY_3' | 'MONTHLY_6' | 'YEARLY';
 
 export interface RegisterRestaurantRequest {
   restaurantName: string;
+  restaurantPin: string;  // 4–6 digit PIN chosen by customer
   ownerName: string;
   ownerEmail: string;
   ownerPassword: string;

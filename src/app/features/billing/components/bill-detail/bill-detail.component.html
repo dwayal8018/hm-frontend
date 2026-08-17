@@ -84,7 +84,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (item of order()!.items; track item.id) {
+          @for (item of groupedItems; track item.menuItemId) {
             <tr>
               <td class="col-item">
                 <span class="food-indicator"
@@ -95,7 +95,7 @@
                 {{ item.menuItemName }}
                 @if (item.notes) { <span class="item-note">· {{ item.notes }}</span> }
               </td>
-              <td class="col-qty center">{{ item.quantity }}</td>
+              <td class="col-qty center">{{ item.totalQty }}</td>
               <td class="col-rate right">₹{{ item.unitPrice | number:'1.2-2' }}</td>
               <td class="col-amt right">₹{{ item.totalPrice | number:'1.2-2' }}</td>
             </tr>

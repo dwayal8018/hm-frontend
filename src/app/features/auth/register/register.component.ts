@@ -53,6 +53,7 @@ export class RegisterComponent implements OnInit {
 
   restaurantForm = this.fb.group({
     restaurantName: ['', [Validators.required, Validators.minLength(2)]],
+    restaurantPin:  ['', [Validators.required, Validators.pattern(/^\d{4,6}$/)]],
     phone:          ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
     address:        [''],
     upiId:          [''],
@@ -125,6 +126,7 @@ export class RegisterComponent implements OnInit {
     const p = this.planForm.value;
     this.auth.register({
       restaurantName: r.restaurantName!,
+      restaurantPin:  r.restaurantPin!,
       phone:          r.phone!,
       address:        r.address ?? undefined,
       upiId:          r.upiId ?? undefined,

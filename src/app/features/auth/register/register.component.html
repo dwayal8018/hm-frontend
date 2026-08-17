@@ -61,6 +61,19 @@
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" class="full-width mt-12">
+                  <mat-label>Restaurant PIN (4–6 digits)</mat-label>
+                  <input matInput formControlName="restaurantPin"
+                         placeholder="e.g. 1234"
+                         maxlength="6"
+                         inputmode="numeric"
+                         autocomplete="off">
+                  <mat-icon matSuffix>pin</mat-icon>
+                  <mat-hint>Choose a PIN you'll remember — staff use this to log in</mat-hint>
+                  <mat-error *ngIf="restaurantForm.get('restaurantPin')?.hasError('required')">PIN is required</mat-error>
+                  <mat-error *ngIf="restaurantForm.get('restaurantPin')?.hasError('pattern')">Must be 4 to 6 digits</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width mt-12">
                   <mat-label>Phone Number</mat-label>
                   <input matInput formControlName="phone" placeholder="10-digit mobile number" maxlength="10" inputmode="numeric">
                   <mat-icon matSuffix>phone</mat-icon>

@@ -41,6 +41,35 @@ export class BillDetailComponent implements OnInit {
   get restaurantLogo():  string { return this.authService.restaurant()?.logoUrl   ?? ''; }
   get upiId():           string { return this.authService.restaurant()?.upiId     ?? ''; }
 
+  /**
+   * Group items by menuItemId for the bill display.
+   * Customer sees "Butter Chicken x4 ₹1280" — not two separate rows for batches.
+   */
+  get groupedItems(): { menuItemId: number; menuItemName: string; foodType: string; unitPrice: number; totalQty: number; totalPrice: number; notes?: string }[] {
+    const items = this.order()?.items;
+    if (!items) return [];
+    const map = new Map<number, { menuItemId: number; menuItemName: string; foodType: string; unitPrice: number; totalQty: number; totalPrice: number; notes?: string }>();
+    for (const item of items) {
+      const existing = map.get(item.menuItemId);
+      if (existing) {
+        existing.totalQty   += item.quantity;
+        existing.totalPrice += item.totalPrice;
+        if (item.notes && !existing.notes) existing.notes = item.notes;
+      } else {
+        map.set(item.menuItemId, {
+          menuItemId:   item.menuItemId,
+          menuItemName: item.menuItemName,
+          foodType:     item.foodType,
+          unitPrice:    item.unitPrice,
+          totalQty:     item.quantity,
+          totalPrice:   item.totalPrice,
+          notes:        item.notes
+        });
+      }
+    }
+    return Array.from(map.values());
+  }
+
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('orderId'));
     this.orderService.getOrder(id).subscribe({

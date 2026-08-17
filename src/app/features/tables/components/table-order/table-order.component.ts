@@ -152,6 +152,46 @@ export class TableOrderComponent implements OnInit {
   get itemCount():   number  { return this.order?.items?.reduce((s, i) => s + i.quantity, 0) ?? 0; }
   get canBill():     boolean { return this.auth.hasRole('OWNER', 'MANAGER'); }
 
+  /**
+   * Group order items by menuItemId for display in the Current Order panel.
+   * Same dish appearing in multiple rows (due to repeat after COOKING/READY)
+   * shows as a single line with combined quantity. Kitchen keeps them separate.
+   */
+  get groupedItems(): { menuItemId: number; menuItemName: string; foodType: string; unitPrice: number; totalQty: number; totalPrice: number; items: OrderItem[] }[] {
+    if (!this.order) return [];
+    const map = new Map<number, { menuItemId: number; menuItemName: string; foodType: string; unitPrice: number; totalQty: number; totalPrice: number; items: OrderItem[] }>();
+    for (const item of this.order.items) {
+      const existing = map.get(item.menuItemId);
+      if (existing) {
+        existing.totalQty   += item.quantity;
+        existing.totalPrice += item.totalPrice;
+        existing.items.push(item);
+      } else {
+        map.set(item.menuItemId, {
+          menuItemId:   item.menuItemId,
+          menuItemName: item.menuItemName,
+          foodType:     item.foodType,
+          unitPrice:    item.unitPrice,
+          totalQty:     item.quantity,
+          totalPrice:   item.totalPrice,
+          items:        [item]
+        });
+      }
+    }
+    return Array.from(map.values());
+  }
+
+  /**
+   * When user changes qty via +/-, we target the PENDING item in the group.
+   * If none are PENDING (all COOKING/READY), we target the last item added.
+   */
+  updateGroupedQty(group: { items: OrderItem[] }, delta: number): void {
+    // Prefer the PENDING row for qty changes
+    const target = group.items.find(i => i.kitchenStatus === 'PENDING') ?? group.items[group.items.length - 1];
+    if (!target) return;
+    this.updateQty(target, delta);
+  }
+
   /** True when table is marked OCCUPIED but has no active OPEN order — orphaned state */
   get isOrphaned(): boolean {
     return !!this.table &&
