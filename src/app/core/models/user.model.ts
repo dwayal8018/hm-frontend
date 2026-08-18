@@ -39,6 +39,7 @@ export interface LoginRequest {
   username: string;
   password: string;
   restaurantCode: string;
+  machineId?: string;  // Hardware fingerprint for machine binding
 }
 
 export type PlanType = 'MONTHLY_3' | 'MONTHLY_6' | 'YEARLY';

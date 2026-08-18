@@ -5,12 +5,24 @@ import { AuthService } from '../services/auth.service';
 export const authGuard: CanActivateFn = (_route, state) => {
   const auth   = inject(AuthService);
   const router = inject(Router);
-  const isAuth = auth.isAuthenticated();
-  if (!isAuth) {
-    router.navigate(['/auth/login'], { queryParams: { returnUrl: state.url } });
-    return false;
+
+  if (auth.isAuthenticated()) {
+    return true;
   }
-  return true;
+
+  // Check if there's a token that just expired (offline grace exhausted)
+  const token = auth.getToken();
+  if (token) {
+    // Token exists but expired — user worked offline too long
+    // Clear stale data and redirect with a message hint
+    auth.logout();
+    router.navigate(['/auth/login'], {
+      queryParams: { returnUrl: state.url, reason: 'session_expired' }
+    });
+  } else {
+    router.navigate(['/auth/login'], { queryParams: { returnUrl: state.url } });
+  }
+  return false;
 };
 
 export const subscriptionGuard: CanActivateFn = (_route, _state) => {
