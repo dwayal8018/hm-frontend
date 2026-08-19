@@ -74,9 +74,9 @@ export class RegisterComponent implements OnInit {
   });
 
   readonly plans = [
-    { value: 'MONTHLY_3', label: '3 Months', days: 90,  price: 999  },
-    { value: 'MONTHLY_6', label: '6 Months', days: 180, price: 1799 },
-    { value: 'YEARLY',    label: '1 Year',   days: 365, price: 2999 }
+    { value: 'MONTHLY_3', label: '3 Months', days: 90,  price: 1999  },
+    { value: 'MONTHLY_6', label: '6 Months', days: 180, price: 3499 },
+    { value: 'YEARLY',    label: '1 Year',   days: 365, price: 5999 }
   ];
 
   readonly roleOptions = [
@@ -96,7 +96,7 @@ export class RegisterComponent implements OnInit {
 
   private generateQr(planType: string): void {
     const plan   = this.plans.find(p => p.value === planType);
-    const amount = plan?.price ?? 2999;
+    const amount = plan?.price ?? 5999;
     const note   = encodeURIComponent('Hotel Manager Subscription');
     const upiLink = `upi://pay?pa=${this.UPI_ID}&pn=${encodeURIComponent(this.UPI_NAME)}&am=${amount}&cu=INR&tn=${note}`;
     QRCode.toDataURL(upiLink, { width: 220, margin: 2, color: { dark: '#000', light: '#fff' }, errorCorrectionLevel: 'M' })
