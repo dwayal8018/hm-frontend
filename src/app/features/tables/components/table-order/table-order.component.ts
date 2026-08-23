@@ -107,16 +107,19 @@ export class TableOrderComponent implements OnInit {
     });
   }
 
+  private addingItem = false;
+
   addItem(item: MenuItem): void {
-    if (!this.table) return;
+    if (!this.table || this.addingItem) return;
+    this.addingItem = true;
     this.orderService.addItemToOrder({
       orderId:    this.order?.id,
       tableId:    this.table.id,
       menuItemId: item.id,
       quantity:   1
     }).subscribe({
-      next:  (o) => { this.order = o; this.snackBar.open(`${item.name} added`, '', { duration: 1200 }); },
-      error: ()  => this.snackBar.open('Failed to add item', 'Close', { duration: 3000 })
+      next:  (o) => { this.order = o; this.addingItem = false; this.snackBar.open(`${item.name} added`, '', { duration: 1200 }); },
+      error: ()  => { this.addingItem = false; this.snackBar.open('Failed to add item', 'Close', { duration: 3000 }); }
     });
   }
 
@@ -138,6 +141,10 @@ export class TableOrderComponent implements OnInit {
 
   openGenerateBill(): void {
     if (!this.order) return;
+    if (!this.order.items || this.order.items.length === 0) {
+      this.snackBar.open('Add items to the order before generating a bill', 'OK', { duration: 3000 });
+      return;
+    }
     const ref = this.dialog.open(GenerateBillDialogComponent, {
       width: '420px',
       disableClose: true,
