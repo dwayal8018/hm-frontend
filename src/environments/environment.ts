@@ -5,5 +5,10 @@ export const environment = {
   subscriptionCheckInterval: 3600000,
   // Payment UPI config — update before deploying to a new installation
   upiId:   '7391818018@yescred',
-  upiName: 'Hotel Manager'
+  upiName: 'Hotel Manager',
+  // Locale — change for different countries
+  // India: ₹, INR | Germany: €, EUR | US: $, USD
+  currencySymbol: '₹',
+  currencyCode:   'INR',
+  locale:         'en-IN'
 };
