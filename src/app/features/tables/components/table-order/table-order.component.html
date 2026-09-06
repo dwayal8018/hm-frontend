@@ -10,6 +10,14 @@
           <mat-icon>arrow_back</mat-icon>
         </button>
         <h2>Table {{ table?.tableNumber ?? '' }}</h2>
+        <span style="flex:1"></span>
+        <button mat-mini-fab color="primary" class="order-toggle-btn"
+                (click)="showOrderPanel = !showOrderPanel">
+          <mat-icon>receipt_long</mat-icon>
+          @if (itemCount > 0) {
+            <span class="toggle-badge">{{ itemCount }}</span>
+          }
+        </button>
       </div>
 
       <!-- Veg / Non-Veg filter -->
@@ -68,8 +76,8 @@
       </mat-tab-group>
     </div>
 
-    <!-- RIGHT: Order panel -->
-    <div class="order-panel">
+    <!-- RIGHT/BOTTOM: Order panel -->
+    <div class="order-panel" [class.panel-open]="showOrderPanel">
       <div class="order-panel-header">
         <h3>Current Order</h3>
         @if (itemCount > 0) {

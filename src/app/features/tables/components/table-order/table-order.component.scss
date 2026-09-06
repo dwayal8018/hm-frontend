@@ -104,3 +104,58 @@
   padding: 10px 14px; font-size: 13px; color: #f57f17;
   mat-icon { font-size: 18px; width: 18px; height: 18px; flex-shrink: 0; }
 }
+
+/* Order toggle FAB — hidden on desktop, visible on tablet/mobile */
+.order-toggle-btn {
+  display: none !important;
+  position: relative;
+  .toggle-badge {
+    position: absolute; top: -4px; right: -4px;
+    background: #fff; color: #bf360c; border-radius: 50%;
+    width: 20px; height: 20px; font-size: 11px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    border: 1.5px solid #bf360c;
+  }
+}
+
+/* ── Tablet: stack vertically, order hidden, toggle to show ────────────────── */
+@media (max-width: 900px) {
+  .order-layout {
+    flex-direction: column;
+  }
+
+  .menu-panel {
+    flex: 1;
+    border-right: none;
+    min-height: 0;
+  }
+
+  .order-toggle-btn { display: inline-flex !important; }
+
+  .order-panel {
+    width: 100%;
+    min-width: unset;
+    max-height: 0;
+    overflow: hidden;
+    border-right: none;
+    transition: max-height 0.25s ease;
+
+    &.panel-open {
+      max-height: 40vh;
+      overflow-y: auto;
+      border-top: 2px solid #e0e0e0;
+    }
+  }
+}
+
+/* ── Small phones ──────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .panel-header h2 { font-size: 16px; }
+  .food-filter-bar { gap: 4px; }
+  .filter-btn { padding: 4px 10px; font-size: 12px; }
+  .menu-item-card mat-card-content { padding: 8px !important; }
+  .item-name { font-size: 13px; }
+  .item-price { font-size: 13px; }
+  .order-panel { max-height: 0; }
+  .order-panel.panel-open { max-height: 35vh; }
+}

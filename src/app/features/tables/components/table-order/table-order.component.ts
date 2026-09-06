@@ -108,6 +108,7 @@ export class TableOrderComponent implements OnInit {
   }
 
   private addingItem = false;
+  showOrderPanel = false; // tablet/mobile: toggle order panel visibility
 
   addItem(item: MenuItem): void {
     if (!this.table || this.addingItem) return;
