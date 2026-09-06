@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
+  demoMode: false,
   localApiUrl: 'http://localhost:8080/api',
   cloudApiUrl: 'http://localhost:8081/api',
   subscriptionCheckInterval: 3600000,

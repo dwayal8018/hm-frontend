@@ -1,0 +1,14 @@
+# Netlify config for the frontend-only DEMO build.
+# Build the demo configuration (seeded in-browser data, no backend) and publish
+# the compiled Angular app.
+[build]
+  base    = "frontend"
+  command = "npm ci && npm run build:demo"
+  publish = "dist/frontend"
+
+# SPA fallback so deep links (e.g. /billing/1001) resolve to the Angular app.
+# Also covered by src/_redirects; kept here as a safety net.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,8 +1,11 @@
 import { Routes } from '@angular/router';
 import { authGuard, subscriptionGuard, roleGuard } from './core/guards/auth.guard';
+import { environment } from '../environments/environment';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'tables', pathMatch: 'full' },
+  // Demo lands on the dashboard (shows live-looking stats immediately);
+  // normal builds keep landing on the tables/POS screen.
+  { path: '', redirectTo: environment.demoMode ? 'dashboard' : 'tables', pathMatch: 'full' },
   {
     path: 'auth',
     loadChildren: () => import('./features/auth/auth.routes').then(m => m.authRoutes)

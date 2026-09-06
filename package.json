@@ -8,6 +8,8 @@
     "start": "ng serve --port 4200",
     "build": "ng build",
     "build:prod": "ng build --configuration production",
+    "build:demo": "ng build --configuration demo",
+    "start:demo": "ng serve --configuration demo --port 4200",
     "test": "ng test",
     "test:ci": "ng test --watch=false --browsers=ChromeHeadless --code-coverage",
     "electron:dev": "concurrently \"ng serve --port 4200\" \"wait-on http://localhost:4200 && electron .\"",
